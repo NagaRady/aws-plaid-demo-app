@@ -13,5 +13,16 @@ nav {
 .auth-wrapper {
   display: flex;
   justify-content: center;
-  margin-top: 2rem;
+  align-items: center;
+  height: 100vh;
+  background-color: #DAA520;
+  /* Set the background color for the wrapper */
+  padding: 20px;
+}
+
+.authenticator {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
