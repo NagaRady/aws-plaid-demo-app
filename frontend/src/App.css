@@ -15,13 +15,14 @@ nav {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #DAA520;
-  /* Set the background color for the wrapper */
+  background-color: white;
+  /* Background is now white */
   padding: 20px;
 }
 
 .authenticator {
-  background-color: white;
+  background-color: #DAA520;
+  /* Login box is now goldenrod */
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
