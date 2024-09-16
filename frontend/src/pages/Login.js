@@ -1,5 +1,5 @@
 import { Authenticator } from '@aws-amplify/ui-react';
-import { useAuthenticator, View } from '@aws-amplify/ui-react';
+import { useAuthenticator, View, Heading, Text } from '@aws-amplify/ui-react';
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 
@@ -9,7 +9,22 @@ export default function Login() {
   const navigate = useNavigate();
   let from = location.state?.from?.pathname || '/';
 
+  // Custom components for Authenticator
   const components = {
+    Header() {
+      return (
+        <Heading level={3}>
+          The journey to safe payments begins here {/* Replaced the old text */}
+        </Heading>
+      );
+    },
+    SignIn: {
+      Header() {
+        return (
+          <Heading level={3}>Login or Signup!</Heading> {/* Replaced "Please login!" */}
+        );
+      }
+    },
     SignUp: {
       Footer() {
         return (
@@ -26,7 +41,7 @@ export default function Login() {
         );
       }
     }
-  }
+  };
 
   useEffect(() => {
     if (route === 'authenticated') {
@@ -36,7 +51,7 @@ export default function Login() {
 
   return (
     <View className="auth-wrapper">
-      <Authenticator components={components} className="authenticator" />
+      <Authenticator components={components}/>
     </View>
   );
 }
