@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { useAuthenticator, Heading, View } from '@aws-amplify/ui-react';
+import { useAuthenticator, Heading, View, Text } from '@aws-amplify/ui-react';
 
 export default function Layout() {
   const { route, signOut, user } = useAuthenticator((context) => [
@@ -17,22 +17,18 @@ export default function Layout() {
 
   return (
     <>
-      {/* Remove the entire nav section to get rid of Home and Login buttons */}
-      {/* <nav>
-        <Button onClick={() => navigate('/')}>Home</Button>
-        {route !== 'authenticated' ? (
-          <Button onClick={() => navigate('/login')}>Login</Button>
-        ) : (
-          <Button onClick={() => logOut()}>Logout</Button>
-        )}
-      </nav> */}
+      {/* Apply a custom class to adjust the font size for the heading */}
+      <Heading level={2} className="custom-heading">
+        The journey to safe payments begins here
+      </Heading>  
       
-      {/* Replace "Plaid AWS Quickstart" and "Please Login!" text */}
-      <Heading level={2}>The journey to safe payments begins here</Heading>  
+      {/* Apply a custom class to adjust the font size for the login/signup message */}
       <View>
-        {route === 'authenticated'
-          ? `Welcome ${user.signInDetails?.loginId}`
-          : 'Login or Signup!'}
+        <Text className="custom-login-text">
+          {route === 'authenticated'
+            ? `Welcome ${user.signInDetails?.loginId}`
+            : 'Login or Signup!'}
+        </Text>
       </View>
 
       <Outlet />
