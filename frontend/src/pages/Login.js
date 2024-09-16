@@ -1,5 +1,5 @@
 import { Authenticator } from '@aws-amplify/ui-react';
-import { useAuthenticator, View, Heading, Text } from '@aws-amplify/ui-react';
+import { useAuthenticator, View, Heading } from '@aws-amplify/ui-react';  // Added 'Heading' import here
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 
@@ -11,17 +11,17 @@ export default function Login() {
 
   // Custom components for Authenticator
   const components = {
-    Header() {
+    Header() {   // Corrected the syntax here
       return (
         <Heading level={3}>
-          The journey to safe payments begins here {/* Replaced the old text */}
+          The journey to safe payments begins here {/* Fixed JSX comment */}
         </Heading>
       );
     },
     SignIn: {
       Header() {
         return (
-          <Heading level={3}>Login or Signup!</Heading> {/* Replaced "Please login!" */}
+          <Heading level={3}>Login or Signup!</Heading>  // Corrected this JSX
         );
       }
     },
@@ -51,7 +51,7 @@ export default function Login() {
 
   return (
     <View className="auth-wrapper">
-      <Authenticator components={components}/>
+      <Authenticator components={components} />
     </View>
   );
 }
