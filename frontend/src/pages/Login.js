@@ -26,6 +26,13 @@ export default function Login() {
           </View>
         );
       }
+    },
+    Header() {
+      return (
+        <Heading level={3}>
+          The journey to safe payments begins here {/* Ensure this only appears on the login page */}
+        </Heading>
+      );
     }
   };
 
