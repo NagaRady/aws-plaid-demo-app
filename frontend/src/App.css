@@ -16,13 +16,11 @@ nav {
   align-items: center;
   height: 100vh;
   background-color: white;
-  /* Background is white */
   padding: 20px;
 }
 
 .authenticator {
   background-color: #DAA520;
-  /* Login box is goldenrod */
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -31,17 +29,16 @@ nav {
 /* Adjust font size of "The journey to safe payments begins here" */
 .custom-heading {
   font-size: 1.0rem;
-  /* Smaller font size for the heading */
   margin-bottom: 1rem;
 }
 
 /* Adjust font size of "Login or Signup!" */
 .custom-login-text {
   font-size: 2rem;
-  /* Larger font size for the login/signup text */
   font-weight: bold;
-  /* Bold the login/signup text */
 }
+
+/* Additional styles for the new tabbed interface */
 
 /* Styling for the tabs in Protected.js */
 .tabs {
@@ -69,4 +66,24 @@ nav {
   border-radius: 10px;
   background-color: #fff;
   margin-top: 20px;
+}
+
+/* Add/Delete Account and Accounts Linked - table styling */
+.table-cell {
+  color: #DAA520;
+}
+
+/* Plaid button styling */
+button {
+  background-color: #DAA520;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #cc8a1e;
+  /* Darker shade for hover effect */
 }

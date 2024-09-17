@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import { ConsoleLogger } from 'aws-amplify/utils';
-import { View, Heading, Flex, Button } from '@aws-amplify/ui-react';
+import { View, Heading, Flex, Button, Table, TableBody, TableCell, TableHead, TableRow } from '@aws-amplify/ui-react';
 import { getItems as GetItems } from '../graphql/queries';
 import Plaid from '../components/Plaid';
 import Institutions from '../components/Institutions';
@@ -35,14 +35,28 @@ export default function Protected() {
       case 'accounts':
         return (
           <View>
-            <Plaid getItems={getItems}/>
+            <Heading>Institution Accounts Linked</Heading>
             {(items && items.length) ? (
-              <View>
-                <Heading>Institutions</Heading>
-                <Institutions institutions={items}/>
-              </View>
+              <Table highlightOnHover={true} size="large" variation="striped">
+                <TableHead>
+                  <TableRow>
+                    <TableCell as="th">Institution Name</TableCell>
+                    <TableCell as="th">Account Type</TableCell>
+                    <TableCell as="th">Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {items.map((institution) => (
+                    <TableRow key={institution.id}>
+                      <TableCell>{institution.name}</TableCell>
+                      <TableCell>{institution.type}</TableCell>
+                      <TableCell>Manage</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             ) : (
-              <div>No institutions linked</div>
+              <div>No accounts linked</div>
             )}
           </View>
         );
@@ -56,8 +70,13 @@ export default function Protected() {
       case 'manageAccount':
         return (
           <View>
-            <Heading>Add/Delete Account</Heading>
-            <p>Use this section to add or delete accounts.</p>
+            <Plaid getItems={getItems} />
+            <Heading>Add/Delete Institution Accounts</Heading>
+            {(items && items.length) ? (
+              <Institutions institutions={items} />
+            ) : (
+              <div>No institutions available</div>
+            )}
           </View>
         );
       case 'profile':
