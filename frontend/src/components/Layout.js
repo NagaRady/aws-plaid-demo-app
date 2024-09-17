@@ -22,9 +22,15 @@ export default function Layout() {
         <Text style={{ fontSize: '2rem', fontWeight: 'bold' }}>
           {route === 'authenticated'
             ? `Welcome ${user.signInDetails?.loginId}`
-            : 'Login or Signup!'} {/* Font size increased to match the previous size of "The journey to safe payments begins here" */}
+            : 'Login or Signup!'}
         </Text>
+        {route === 'authenticated' && (
+          <button onClick={logOut} style={{ marginTop: '1rem' }}>
+            Log Out
+          </button>
+        )}
       </View>
+
 
       <Outlet />
     </>
