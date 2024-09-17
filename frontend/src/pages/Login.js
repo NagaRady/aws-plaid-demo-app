@@ -61,8 +61,8 @@ export default function Login() {
     },
     Header() {
       return (
-        <Heading level={3}>
-          The journey to safe payments begins here
+        <Heading level={3} className="login-header">
+          The journey to safe payments begins here {/* Font size reduced by 33% */}
         </Heading>
       );
     }

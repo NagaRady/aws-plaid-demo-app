@@ -26,7 +26,19 @@ nav {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Removed "The journey to safe payments begins here" */
+/* Reduce the font size of "The journey to safe payments begins here" by 33% */
+.login-header {
+  font-size: 66.67%;
+  /* Decrease by 33% */
+}
+
+/* Increase the font size of "Login or Signup!" to match the previous size of "The journey to safe payments begins here" */
+.login-signup-text {
+  font-size: 100%;
+  /* Set to the original font size */
+  font-weight: bold;
+  /* Optional bold style */
+}
 
 /* Adjust font size of "Login or Signup!" */
 .custom-login-text {
@@ -67,9 +79,8 @@ nav {
 /* Plaid button styling */
 button {
   background-color: #DAA520;
-  /* Same goldenrod color */
   color: black;
-  /* Black text */
+  /* Black text on the button */
   border: none;
   padding: 10px 20px;
   cursor: pointer;

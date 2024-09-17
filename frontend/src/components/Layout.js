@@ -17,14 +17,12 @@ export default function Layout() {
 
   return (
     <>
-      {/* Remove the heading that displays "The journey to safe payments begins here" */}
-      
-      {/* Display the login/signup message or welcome message based on authentication */}
+      {/* Display the login/signup message with adjusted font size */}
       <View>
-        <Text className="custom-login-text">
+        <Text className="login-signup-text">
           {route === 'authenticated'
             ? `Welcome ${user.signInDetails?.loginId}`
-            : 'Login or Signup!'}
+            : 'Login or Signup!'} {/* Font size increased to match the previous "The journey to safe payments begins here" */}
         </Text>
       </View>
 
