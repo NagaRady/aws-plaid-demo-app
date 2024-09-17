@@ -61,8 +61,8 @@ export default function Login() {
     },
     Header() {
       return (
-        <Heading level={3} style={{ fontSize: '66.67%' }}>
-          The journey to safe payments begins here {/* Font size reduced by 33% */}
+        <Heading level={3} style={{ fontSize: '1.6rem', fontStyle: 'italic' }}>
+          The journey to safe payments begins here {/* Font size set to 1.6rem and italic */}
         </Heading>
       );
     }
