@@ -1,0 +1,23 @@
+.password-policy {
+    margin-top: 1rem;
+  }
+  
+  .password-policy .question-mark {
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+    margin-left: 5px;
+  }
+  
+  .password-policy .password-requirements {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 10px;
+  }
+  
+  .password-policy .password-requirements li {
+    text-align: left;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  

@@ -1,13 +1,22 @@
 import { Authenticator } from '@aws-amplify/ui-react';
 import { useAuthenticator, View, Heading, TextField } from '@aws-amplify/ui-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';  // Import useState for managing the password policy visibility
 import { useNavigate, useLocation } from 'react-router';
+import './Login.css';  // Add styles in this CSS file for custom styling
 
 export default function Login() {
   const { route } = useAuthenticator((context) => [context.route]);
   const location = useLocation();
   const navigate = useNavigate();
   let from = location.state?.from?.pathname || '/';
+
+  // State to control the visibility of password policy
+  const [showPolicy, setShowPolicy] = useState(false);
+
+  // Toggle function for showing/hiding password policy
+  const togglePolicy = () => {
+    setShowPolicy(!showPolicy);
+  };
 
   // Custom components for the Authenticator
   const components = {
@@ -41,30 +50,36 @@ export default function Login() {
               label="Password"
               required
             />
+
+            {/* Password Policy Section */}
+            <View textAlign="center" className="password-policy">
+              <strong>Password Policy</strong>
+              <span className="question-mark" onClick={togglePolicy}>
+                {" "}
+                (What's this?)
+              </span>
+
+              {/* Password requirements - conditionally shown */}
+              {showPolicy && (
+                <ul className="password-requirements">
+                  <li>Minimum of 8 characters</li>
+                  <li>At least one lowercase character</li>
+                  <li>At least one uppercase character</li>
+                  <li>At least one number character</li>
+                  <li>At least one symbol character</li>
+                </ul>
+              )}
+            </View>
           </>
         );
       },
-      Footer() {
+      Header() {
         return (
-          <View textAlign="center">
-            <strong>Password Policy</strong>:
-            <ul>
-              <li>Minimum of 8 characters</li>
-              <li>At least one lowercase character</li>
-              <li>At least one uppercase character</li>
-              <li>At least one number character</li>
-              <li>At least one symbol character</li>
-            </ul>
-          </View>
+          <Heading level={3} style={{ fontSize: '1.6rem', fontStyle: 'italic' }}>
+            The journey to safe payments begins here {/* Font size set to 1.6rem and italic */}
+          </Heading>
         );
       }
-    },
-    Header() {
-      return (
-        <Heading level={3} style={{ fontSize: '1.6rem', fontStyle: 'italic' }}>
-          The journey to safe payments begins here {/* Font size set to 1.6rem and italic */}
-        </Heading>
-      );
     }
   };
 
