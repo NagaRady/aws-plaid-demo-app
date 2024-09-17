@@ -110,3 +110,23 @@ button {
 button:hover {
   background-color: lightblue;
 }
+
+/* Top-right positioning for logout button */
+.top-right-logout {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  z-index: 1;
+}
+
+.top-right-logout button {
+  background-color: #DAA520;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.top-right-logout button:hover {
+  background-color: lightblue;
+}
