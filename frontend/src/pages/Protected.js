@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import { ConsoleLogger } from 'aws-amplify/utils';
-import { View, Heading, Flex, Button, Table, TableBody, TableCell, TableHead, TableRow } from '@aws-amplify/ui-react';
+import { View, Heading, Flex, Button } from '@aws-amplify/ui-react';
 import { getItems as GetItems } from '../graphql/queries';
 import Plaid from '../components/Plaid';
 import Institutions from '../components/Institutions';
+import dayjs from 'dayjs'; // For date manipulation
 
 const logger = new ConsoleLogger("Protected");
 
@@ -12,6 +13,7 @@ export default function Protected() {
   const [items, setItems] = useState([]);
   const [activeTab, setActiveTab] = useState('accounts'); // State to manage active tab
   const client = generateClient();
+  const today = dayjs(); // Get today's date
 
   const getItems = async () => {
     try {
@@ -29,34 +31,35 @@ export default function Protected() {
     getItems();
   }, []);
 
+  const isDueDatePassed = (dueDate) => {
+    return dayjs(dueDate).isBefore(today, 'day'); // Check if due date is passed
+  };
+
   // Tab content rendering based on active tab
   const renderContent = () => {
     switch (activeTab) {
-      case 'accounts':
+      case 'accounts': // Updated "Upcoming Bills" with card view
         return (
           <View>
             <Heading>Upcoming Bills</Heading>
-            {(items && items.length) ? (
-              <Table highlightOnHover={true} size="large" variation="striped">
-                <TableHead>
-                  <TableRow>
-                    <TableCell as="th">Institution Name</TableCell>
-                    <TableCell as="th">Account Type</TableCell>
-                    <TableCell as="th">Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {items.map((institution) => (
-                    <TableRow key={institution.id}>
-                      <TableCell>{institution.name}</TableCell>
-                      <TableCell>{institution.type}</TableCell>
-                      <TableCell>Manage</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+            {items && items.length ? (
+              <Flex direction="row" wrap="wrap" justifyContent="center">
+                {items.map((card) => (
+                  <View
+                    key={card.id}
+                    className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''}`}
+                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: '250px', backgroundColor: '#f9f9f9' }}
+                  >
+                    <Heading level={4}>{card.bankTitle}</Heading>
+                    <p>Bill Amount: ${card.billAmount}</p>
+                    <p>Due Date: {dayjs(card.dueDate).format('MMMM D, YYYY')}</p>
+                    <p>Statement Date: {dayjs(card.statementDate).format('MMMM D, YYYY')}</p>
+                    <Button style={{ backgroundColor: '#DAA520', color: 'black' }}>Manage</Button>
+                  </View>
+                ))}
+              </Flex>
             ) : (
-              <div>No accounts linked</div>
+              <div>No upcoming bills</div>
             )}
           </View>
         );
@@ -67,26 +70,26 @@ export default function Protected() {
             <p>Your scheduled bills will be displayed here.</p>
           </View>
         );
-      case 'history':
+      case 'history': // Payment History tab
         return (
           <View>
             <Heading>Payment History</Heading>
             <p>Your payment history will be displayed here.</p>
           </View>
         );
-      case 'manageAccount':
+      case 'manageAccount': // Add/Delete Account tab
         return (
           <View>
             <Plaid getItems={getItems} />
             <Heading>Add/Delete Institution Accounts</Heading>
-            {(items && items.length) ? (
+            {items && items.length ? (
               <Institutions institutions={items} />
             ) : (
               <div>No institutions available</div>
             )}
           </View>
         );
-      case 'profile':
+      case 'profile': // Profile tab
         return (
           <View>
             <Heading>Your Profile</Heading>
@@ -108,7 +111,7 @@ export default function Protected() {
           variation={activeTab === 'accounts' ? 'primary' : 'link'}
           onClick={() => setActiveTab('accounts')}
         >
-          Upcoming Bills
+          Upcoming Bills {/* Button renamed from "Accounts Linked" */}
         </Button>
         <Button
           variation={activeTab === 'scheduledBills' ? 'primary' : 'link'}

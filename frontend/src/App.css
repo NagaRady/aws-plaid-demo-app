@@ -26,18 +26,42 @@ nav {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Reduce the font size of "The journey to safe payments begins here" by 33% */
-.login-header {
-  font-size: 66.67%;
-  /* Decrease by 33% */
+/* Styling for the card view of upcoming bills */
+.bill-card {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  width: 250px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
 }
 
-/* Increase the font size of "Login or Signup!" to match the previous size of "The journey to safe payments begins here" */
-.login-signup-text {
-  font-size: 100%;
-  /* Set to the original font size */
-  font-weight: bold;
-  /* Optional bold style */
+.bill-card.greyed-out {
+  background-color: #d3d3d3;
+  /* Greyed out if due date has passed */
+  color: #777;
+}
+
+.bill-card h4 {
+  margin-bottom: 10px;
+}
+
+.bill-card p {
+  margin: 5px 0;
+}
+
+.bill-card button {
+  background-color: #DAA520;
+  color: black;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.bill-card button:hover {
+  background-color: lightblue;
 }
 
 /* Adjust font size of "Login or Signup!" */
@@ -53,9 +77,7 @@ nav {
 
 .tabs button {
   background-color: #DAA520;
-  /* Default button color is goldenrod */
   color: black;
-  /* Font color for buttons */
   border: none;
   padding: 10px 20px;
   cursor: pointer;
@@ -65,7 +87,6 @@ nav {
 
 .tabs button:hover {
   background-color: lightblue;
-  /* Change button color to light blue on hover */
 }
 
 .tab-content {
@@ -80,7 +101,6 @@ nav {
 button {
   background-color: #DAA520;
   color: black;
-  /* Black text on the button */
   border: none;
   padding: 10px 20px;
   cursor: pointer;
@@ -89,5 +109,24 @@ button {
 
 button:hover {
   background-color: lightblue;
-  /* Hover effect turns button light blue */
+}
+
+/* Top-right positioning for logout button */
+.top-right-logout {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  z-index: 1;
+}
+
+.top-right-logout button {
+  background-color: #DAA520;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.top-right-logout button:hover {
+  background-color: lightblue;
 }

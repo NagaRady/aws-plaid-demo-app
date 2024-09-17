@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { useAuthenticator, View, Text } from '@aws-amplify/ui-react';
+import { useAuthenticator, View, Text, Button } from '@aws-amplify/ui-react';
 
 export default function Layout() {
   const { route, signOut, user } = useAuthenticator((context) => [
@@ -17,20 +17,19 @@ export default function Layout() {
 
   return (
     <>
-      {/* Display the login/signup message with adjusted font size */}
+      {/* Logout button positioned in the top-right */}
+      <div className="top-right-logout">
+        <Button onClick={logOut}>Logout</Button>
+      </div>
+      
+      {/* Display the login/signup message or welcome message based on authentication */}
       <View>
-        <Text style={{ fontSize: '2rem', fontWeight: 'bold' }}>
+        <Text className="custom-login-text">
           {route === 'authenticated'
             ? `Welcome ${user.signInDetails?.loginId}`
             : 'Login or Signup!'}
         </Text>
-        {route === 'authenticated' && (
-          <button onClick={logOut} style={{ marginTop: '1rem' }}>
-            Log Out
-          </button>
-        )}
       </View>
-
 
       <Outlet />
     </>
