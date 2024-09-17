@@ -97,6 +97,12 @@ nav {
   background-color: lightblue;
 }
 
+/* Active tab styling */
+.tabs button.active {
+  background-color: lightblue;
+  color: black;
+}
+
 .tab-content {
   border: 1px solid #ccc;
   padding: 20px;

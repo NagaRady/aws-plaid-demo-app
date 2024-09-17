@@ -108,31 +108,31 @@ export default function Protected() {
       {/* Tab Buttons */}
       <div className="tabs">
         <Button
-          variation={activeTab === 'accounts' ? 'primary' : 'link'}
+          className={activeTab === 'accounts' ? 'active' : ''}
           onClick={() => setActiveTab('accounts')}
         >
           Upcoming Bills {/* Button renamed from "Accounts Linked" */}
         </Button>
         <Button
-          variation={activeTab === 'scheduledBills' ? 'primary' : 'link'}
+          className={activeTab === 'scheduledBills' ? 'active' : ''}
           onClick={() => setActiveTab('scheduledBills')}
         >
           Scheduled Bills {/* New Tab */}
         </Button>
         <Button
-          variation={activeTab === 'history' ? 'primary' : 'link'}
+          className={activeTab === 'history' ? 'active' : ''}
           onClick={() => setActiveTab('history')}
         >
           Payment History
         </Button>
         <Button
-          variation={activeTab === 'manageAccount' ? 'primary' : 'link'}
+          className={activeTab === 'manageAccount' ? 'active' : ''}
           onClick={() => setActiveTab('manageAccount')}
         >
           Add/Delete Account
         </Button>
         <Button
-          variation={activeTab === 'profile' ? 'primary' : 'link'}
+          className={activeTab === 'profile' ? 'active' : ''}
           onClick={() => setActiveTab('profile')}
         >
           Profile
