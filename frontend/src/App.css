@@ -26,6 +26,14 @@ nav {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Position Logout button in the top-right */
+.top-right-logout {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
 /* Styling for the card view of upcoming bills */
 .bill-card {
   border: 1px solid #ccc;
