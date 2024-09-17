@@ -1,5 +1,5 @@
 import { Authenticator } from '@aws-amplify/ui-react';
-import { useAuthenticator, View, Heading } from '@aws-amplify/ui-react';
+import { useAuthenticator, View, Heading, TextField } from '@aws-amplify/ui-react';
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 
@@ -12,6 +12,38 @@ export default function Login() {
   // Custom components for the Authenticator
   const components = {
     SignUp: {
+      FormFields() {
+        return (
+          <>
+            {/* First Name and Last Name fields added */}
+            <TextField
+              name="given_name"
+              placeholder="First Name"
+              label="First Name"
+              required
+            />
+            <TextField
+              name="family_name"
+              placeholder="Last Name"
+              label="Last Name"
+              required
+            />
+            <TextField
+              name="username"
+              placeholder="Username"
+              label="Username"
+              required
+            />
+            <TextField
+              name="password"
+              type="password"
+              placeholder="Password"
+              label="Password"
+              required
+            />
+          </>
+        );
+      },
       Footer() {
         return (
           <View textAlign="center">
@@ -30,7 +62,7 @@ export default function Login() {
     Header() {
       return (
         <Heading level={3}>
-          The journey to safe payments begins here {/* Ensure this only appears on the login page */}
+          The journey to safe payments begins here
         </Heading>
       );
     }
