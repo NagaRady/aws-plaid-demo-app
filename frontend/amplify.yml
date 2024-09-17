@@ -12,7 +12,6 @@ frontend:
         - REACT_APP_COGNITO_CLIENT_ID=${REACT_APP_COGNITO_CLIENT_ID}
         - REACT_APP_GRAPHQL_URL=${REACT_APP_GRAPHQL_URL}
         - REACT_APP_REGION=${REACT_APP_REGION}
-        - npm install dayjs  # Explicitly install dayjs before running the build
         - npm run-script build
   artifacts:
     baseDirectory: build
