@@ -26,11 +26,7 @@ nav {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Adjust font size of "The journey to safe payments begins here" */
-.custom-heading {
-  font-size: 1.0rem;
-  margin-bottom: 1rem;
-}
+/* Removed "The journey to safe payments begins here" */
 
 /* Adjust font size of "Login or Signup!" */
 .custom-login-text {
@@ -56,8 +52,8 @@ nav {
 }
 
 .tabs button:hover {
-  background-color: blue;
-  /* Change button color to blue on hover */
+  background-color: lightblue;
+  /* Change button color to light blue on hover */
 }
 
 .tab-content {
@@ -71,8 +67,9 @@ nav {
 /* Plaid button styling */
 button {
   background-color: #DAA520;
+  /* Same goldenrod color */
   color: black;
-  /* Black text on the button */
+  /* Black text */
   border: none;
   padding: 10px 20px;
   cursor: pointer;
@@ -80,6 +77,6 @@ button {
 }
 
 button:hover {
-  background-color: blue;
-  /* Hover effect turns button blue */
+  background-color: lightblue;
+  /* Hover effect turns button light blue */
 }
