@@ -42,3 +42,31 @@ nav {
   font-weight: bold;
   /* Bold the login/signup text */
 }
+
+/* Styling for the tabs in Protected.js */
+.tabs {
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  background-color: #f1f1f1;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.tabs button.active {
+  background-color: #DAA520;
+  /* Highlight active tab */
+  color: white;
+}
+
+.tab-content {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fff;
+  margin-top: 20px;
+}
