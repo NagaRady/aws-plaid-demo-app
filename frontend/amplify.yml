@@ -4,7 +4,6 @@ frontend:
     preBuild:
       commands:
         - npm ci --no-fund --no-audit
-        - npm install dayjs  # Ensure dayjs is installed
     build:
       commands:
         - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
@@ -13,6 +12,7 @@ frontend:
         - REACT_APP_COGNITO_CLIENT_ID=${REACT_APP_COGNITO_CLIENT_ID}
         - REACT_APP_GRAPHQL_URL=${REACT_APP_GRAPHQL_URL}
         - REACT_APP_REGION=${REACT_APP_REGION}
+        - npm install dayjs  # Explicitly install dayjs before running the build
         - npm run-script build
   artifacts:
     baseDirectory: build
