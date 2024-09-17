@@ -56,7 +56,7 @@ export default function Login() {
               <strong>Password Policy</strong>
               <span className="question-mark" onClick={togglePolicy}>
                 {" "}
-                (What's this?)
+                (?)
               </span>
 
               {/* Password requirements - conditionally shown */}
