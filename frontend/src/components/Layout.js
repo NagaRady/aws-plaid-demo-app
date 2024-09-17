@@ -17,12 +17,14 @@ export default function Layout() {
 
   return (
     <>
-      {/* Apply a custom class to adjust the font size for the heading */}
-      <Heading level={2} className="custom-heading">
-        The journey to safe payments begins here
-      </Heading>  
-      
-      {/* Apply a custom class to adjust the font size for the login/signup message */}
+      {/* Conditionally display the heading only when the user is NOT authenticated */}
+      {route !== 'authenticated' && (
+        <Heading level={2} className="custom-heading">
+          The journey to safe payments begins here
+        </Heading>
+      )}
+
+      {/* Display the login/signup message or welcome message based on authentication */}
       <View>
         <Text className="custom-login-text">
           {route === 'authenticated'
