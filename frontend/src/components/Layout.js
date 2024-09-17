@@ -19,10 +19,10 @@ export default function Layout() {
     <>
       {/* Display the login/signup message with adjusted font size */}
       <View>
-        <Text className="login-signup-text">
+        <Text style={{ fontSize: '2rem', fontWeight: 'bold' }}>
           {route === 'authenticated'
             ? `Welcome ${user.signInDetails?.loginId}`
-            : 'Login or Signup!'} {/* Font size increased to match the previous "The journey to safe payments begins here" */}
+            : 'Login or Signup!'} {/* Font size increased to match the previous size of "The journey to safe payments begins here" */}
         </Text>
       </View>
 
