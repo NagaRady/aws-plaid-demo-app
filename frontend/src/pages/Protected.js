@@ -5,15 +5,13 @@ import { View, Heading, Flex, Button } from '@aws-amplify/ui-react';
 import { getItems as GetItems } from '../graphql/queries';
 import Plaid from '../components/Plaid';
 import Institutions from '../components/Institutions';
-import dayjs from 'dayjs'; // For date manipulation
 
 const logger = new ConsoleLogger("Protected");
 
 export default function Protected() {
   const [items, setItems] = useState([]);
-  const [activeTab, setActiveTab] = useState('accounts'); // State to manage active tab
   const client = generateClient();
-  const today = dayjs(); // Get today's date
+  const today = new Date(); // Get today's date
 
   const getItems = async () => {
     try {
@@ -32,7 +30,8 @@ export default function Protected() {
   }, []);
 
   const isDueDatePassed = (dueDate) => {
-    return dayjs(dueDate).isBefore(today, 'day'); // Check if due date is passed
+    const dueDateObj = new Date(dueDate);
+    return dueDateObj < today; // Check if due date is before today
   };
 
   // Tab content rendering based on active tab
@@ -52,8 +51,8 @@ export default function Protected() {
                   >
                     <Heading level={4}>{card.bankTitle}</Heading>
                     <p>Bill Amount: ${card.billAmount}</p>
-                    <p>Due Date: {dayjs(card.dueDate).format('MMMM D, YYYY')}</p>
-                    <p>Statement Date: {dayjs(card.statementDate).format('MMMM D, YYYY')}</p>
+                    <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
+                    <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
                     <Button style={{ backgroundColor: '#DAA520', color: 'black' }}>Manage</Button>
                   </View>
                 ))}
