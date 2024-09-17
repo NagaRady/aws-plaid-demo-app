@@ -17,10 +17,12 @@ export default function Layout() {
 
   return (
     <>
-      {/* Logout button positioned in the top-right */}
-      <div className="top-right-logout">
-        <Button onClick={logOut}>Logout</Button>
-      </div>
+      {/* Conditionally render Logout button only when authenticated */}
+      {route === 'authenticated' && (
+        <div className="top-right-logout">
+          <Button onClick={logOut}>Logout</Button>
+        </div>
+      )}
       
       {/* Display the login/signup message or welcome message based on authentication */}
       <View>
