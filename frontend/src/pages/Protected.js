@@ -93,7 +93,8 @@ export default function Protected() {
 
   return (
     <Flex direction="column" style={{ padding: '20px', textAlign: 'center' }}>
-      <Heading>Welcome to Your Dashboard</Heading>
+      {/* Updated to "Your Dashboard" */}
+      <Heading>Your Dashboard</Heading>
       
       {/* Tab Buttons */}
       <div className="tabs">

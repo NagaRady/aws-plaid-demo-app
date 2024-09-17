@@ -38,15 +38,16 @@ nav {
   font-weight: bold;
 }
 
-/* Additional styles for the new tabbed interface */
-
 /* Styling for the tabs in Protected.js */
 .tabs {
   margin-bottom: 20px;
 }
 
 .tabs button {
-  background-color: #f1f1f1;
+  background-color: #DAA520;
+  /* Default button color is goldenrod */
+  color: black;
+  /* Font color for buttons */
   border: none;
   padding: 10px 20px;
   cursor: pointer;
@@ -54,10 +55,9 @@ nav {
   font-size: 16px;
 }
 
-.tabs button.active {
-  background-color: #DAA520;
-  /* Highlight active tab */
-  color: white;
+.tabs button:hover {
+  background-color: blue;
+  /* Change button color to blue on hover */
 }
 
 .tab-content {
@@ -68,15 +68,11 @@ nav {
   margin-top: 20px;
 }
 
-/* Add/Delete Account and Accounts Linked - table styling */
-.table-cell {
-  color: #DAA520;
-}
-
 /* Plaid button styling */
 button {
   background-color: #DAA520;
-  color: white;
+  color: black;
+  /* Black text on the button */
   border: none;
   padding: 10px 20px;
   cursor: pointer;
@@ -84,6 +80,6 @@ button {
 }
 
 button:hover {
-  background-color: #cc8a1e;
-  /* Darker shade for hover effect */
+  background-color: blue;
+  /* Hover effect turns button blue */
 }
