@@ -10,6 +10,7 @@ const logger = new ConsoleLogger("Protected");
 
 export default function Protected() {
   const [items, setItems] = useState([]);
+  const [activeTab, setActiveTab] = useState('accounts'); // Add state for tab management
   const client = generateClient();
   const today = new Date(); // Get today's date
 
