@@ -23,7 +23,7 @@ export default function Protected() {
     } catch (err) {
       logger.error('unable to get items', err);
     }
-  }
+  };
 
   useEffect(() => {
     getItems();
@@ -35,7 +35,7 @@ export default function Protected() {
       case 'accounts':
         return (
           <View>
-            <Heading>Institution Accounts Linked</Heading>
+            <Heading>Upcoming Bills</Heading>
             {(items && items.length) ? (
               <Table highlightOnHover={true} size="large" variation="striped">
                 <TableHead>
@@ -58,6 +58,13 @@ export default function Protected() {
             ) : (
               <div>No accounts linked</div>
             )}
+          </View>
+        );
+      case 'scheduledBills': // New Scheduled Bills tab content
+        return (
+          <View>
+            <Heading>Scheduled Bills</Heading>
+            <p>Your scheduled bills will be displayed here.</p>
           </View>
         );
       case 'history':
@@ -93,7 +100,6 @@ export default function Protected() {
 
   return (
     <Flex direction="column" style={{ padding: '20px', textAlign: 'center' }}>
-      {/* Updated to "Your Dashboard" */}
       <Heading>Your Dashboard</Heading>
       
       {/* Tab Buttons */}
@@ -102,7 +108,13 @@ export default function Protected() {
           variation={activeTab === 'accounts' ? 'primary' : 'link'}
           onClick={() => setActiveTab('accounts')}
         >
-          Accounts Linked
+          Upcoming Bills
+        </Button>
+        <Button
+          variation={activeTab === 'scheduledBills' ? 'primary' : 'link'}
+          onClick={() => setActiveTab('scheduledBills')}
+        >
+          Scheduled Bills {/* New Tab */}
         </Button>
         <Button
           variation={activeTab === 'history' ? 'primary' : 'link'}
