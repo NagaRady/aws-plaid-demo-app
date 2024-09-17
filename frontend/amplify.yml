@@ -4,6 +4,7 @@ frontend:
     preBuild:
       commands:
         - npm ci --no-fund --no-audit
+        - npm install dayjs  # Ensure dayjs is installed
     build:
       commands:
         - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
