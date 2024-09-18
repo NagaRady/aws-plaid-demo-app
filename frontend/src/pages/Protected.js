@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import { ConsoleLogger } from 'aws-amplify/utils';
 import { View, Heading, Flex, Button } from '@aws-amplify/ui-react';
@@ -14,6 +14,7 @@ export default function Protected() {
   const [openModalIndex, setOpenModalIndex] = useState(null); // Track clicked Pay button
   const client = generateClient();
   const today = new Date();
+  const modalRef = useRef(null); // Reference to the modal
 
   const getItems = async () => {
     try {
@@ -29,6 +30,20 @@ export default function Protected() {
 
   useEffect(() => {
     getItems();
+  }, []);
+
+  // Close the modal if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setOpenModalIndex(null);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const isDueDatePassed = (dueDate) => {
@@ -69,7 +84,7 @@ export default function Protected() {
 
                       {/* Show the modal only for the clicked Pay button */}
                       {openModalIndex === index && (
-                        <div className="modal">
+                        <div className="modal" ref={modalRef}>
                           <Button className="small-button">PayNow</Button>
                           <Button className="small-button">AutoPay</Button>
                         </div>
