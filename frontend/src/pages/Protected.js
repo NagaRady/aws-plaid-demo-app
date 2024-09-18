@@ -35,10 +35,9 @@ export default function Protected() {
     return dueDateObj < today;
   };
 
-  // Tab content rendering based on active tab
   const renderContent = () => {
     switch (activeTab) {
-      case 'accounts': // "Upcoming Bills" with card view
+      case 'accounts':
         return (
           <View>
             <Heading>Upcoming Bills</Heading>
@@ -48,25 +47,20 @@ export default function Protected() {
                   <View
                     key={card.id}
                     className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''}`}
-                    style={{
-                      padding: '20px',
-                      border: '1px solid #ccc',
-                      margin: '10px',
-                      borderRadius: '10px',
-                      width: '250px',
-                      backgroundColor: '#f9f9f9'
-                    }}
+                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: '250px', backgroundColor: '#f9f9f9' }}
                   >
-                    {/* Bank Name Header */}
-                    <Heading level={4}>{card.bankTitle}</Heading>
-
-                    {/* Bill Details */}
+                    {/* Bank Name in header center */}
+                    <Heading level={4} style={{ textAlign: 'center' }}>
+                      {card.bankTitle}
+                    </Heading>
                     <p>Bill Amount: ${card.billAmount}</p>
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
-
-                    {/* Pay Button in Footer */}
-                    <Button className="pay-button">Pay</Button>
+                    
+                    {/* Pay button in footer center */}
+                    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                      <Button style={{ backgroundColor: '#DAA520', color: 'black' }}>Pay</Button>
+                    </div>
                   </View>
                 ))}
               </Flex>
@@ -116,7 +110,7 @@ export default function Protected() {
   return (
     <Flex direction="column" style={{ padding: '20px', textAlign: 'center' }}>
       <Heading>Your Dashboard</Heading>
-
+      
       {/* Tab Buttons */}
       <div className="tabs">
         <Button
