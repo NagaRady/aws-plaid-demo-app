@@ -1,114 +1,147 @@
-#root {
-  text-align: center;
-  margin: 1.2rem;
-}
+import { useState, useEffect } from 'react';
+import { generateClient } from 'aws-amplify/api';
+import { ConsoleLogger } from 'aws-amplify/utils';
+import { View, Heading, Flex } from '@aws-amplify/ui-react';
+import { getItems as GetItems } from '../graphql/queries';
+import Plaid from '../components/Plaid';
+import Institutions from '../components/Institutions';
 
-nav {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
+const logger = new ConsoleLogger("Protected");
 
-.auth-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: white;
-  padding: 20px;
-}
+export default function Protected() {
+  const [items, setItems] = useState([]);
+  const [activeTab, setActiveTab] = useState('accounts'); // Add state for tab management
+  const client = generateClient();
+  const today = new Date(); // Get today's date
 
-.authenticator {
-  background-color: #DAA520;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+  const getItems = async () => {
+    try {
+      const res = await client.graphql({
+        query: GetItems
+      });
+      logger.info(res);
+      setItems(res.data.getItems.items);
+    } catch (err) {
+      logger.error('unable to get items', err);
+    }
+  };
 
-/* Position Logout button in the top-right */
-.top-right-logout {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-}
+  useEffect(() => {
+    getItems();
+  }, []);
 
-/* Styling for the card view of upcoming bills */
-.bill-card {
-  border: 1px solid #ccc;
-  padding: 20px;
-  margin: 10px;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  width: 250px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-}
+  const isDueDatePassed = (dueDate) => {
+    const dueDateObj = new Date(dueDate);
+    return dueDateObj < today; // Check if due date is before today
+  };
 
-.bill-card.greyed-out {
-  background-color: #d3d3d3;
-  /* Greyed out if due date has passed */
-  color: #777;
-}
+  // Tab content rendering based on active tab
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'accounts': // Updated "Upcoming Bills" with card view
+        return (
+          <View>
+            <Heading>Upcoming Bills</Heading>
+            {items && items.length ? (
+              <Flex direction="row" wrap="wrap" justifyContent="center">
+                {items.map((card) => (
+                  <View
+                    key={card.id}
+                    className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''}`}
+                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: '250px', backgroundColor: '#f9f9f9' }}
+                  >
+                    <Heading level={4}>{card.bankTitle}</Heading>
+                    <p>Bill Amount: ${card.billAmount}</p>
+                    <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
+                    <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
+                  </View>
+                ))}
+              </Flex>
+            ) : (
+              <div>No upcoming bills</div>
+            )}
+          </View>
+        );
+      case 'scheduledBills': // New Scheduled Bills tab content
+        return (
+          <View>
+            <Heading>Scheduled Bills</Heading>
+            <p>Your scheduled bills will be displayed here.</p>
+          </View>
+        );
+      case 'history': // Payment History tab
+        return (
+          <View>
+            <Heading>Payment History</Heading>
+            <p>Your payment history will be displayed here.</p>
+          </View>
+        );
+      case 'manageAccount': // Add/Delete Account tab
+        return (
+          <View>
+            <Plaid getItems={getItems} />
+            <Heading>Add/Delete Institution Accounts</Heading>
+            {items && items.length ? (
+              <Institutions institutions={items} />
+            ) : (
+              <div>No institutions available</div>
+            )}
+          </View>
+        );
+      case 'profile': // Profile tab
+        return (
+          <View>
+            <Heading>Your Profile</Heading>
+            <p>Your profile information will be displayed here.</p>
+          </View>
+        );
+      default:
+        return null;
+    }
+  };
 
-.bill-card h4 {
-  margin-bottom: 10px;
-}
+  return (
+    <Flex direction="column" style={{ padding: '20px', textAlign: 'center' }}>
+      <Heading>Your Dashboard</Heading>
+      
+      {/* Tab Buttons */}
+      <div className="tabs">
+        <button
+          className={activeTab === 'accounts' ? 'active' : ''}
+          onClick={() => setActiveTab('accounts')}
+        >
+          Upcoming Bills
+        </button>
+        <button
+          className={activeTab === 'scheduledBills' ? 'active' : ''}
+          onClick={() => setActiveTab('scheduledBills')}
+        >
+          Scheduled Bills
+        </button>
+        <button
+          className={activeTab === 'history' ? 'active' : ''}
+          onClick={() => setActiveTab('history')}
+        >
+          Payment History
+        </button>
+        <button
+          className={activeTab === 'manageAccount' ? 'active' : ''}
+          onClick={() => setActiveTab('manageAccount')}
+        >
+          Add/Delete Account
+        </button>
+        <button
+          className={activeTab === 'profile' ? 'active' : ''}
+          onClick={() => setActiveTab('profile')}
+        >
+          Profile
+        </button>
+      </div>
 
-.bill-card p {
-  margin: 5px 0;
-}
-
-/* Adjust font size of "Login or Signup!" */
-.custom-login-text {
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-/* Styling for the tabs in Protected.js */
-.tabs {
-  margin-bottom: 20px;
-}
-
-.tabs button {
-  background-color: #DAA520;
-  color: black;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  margin-right: 10px;
-  font-size: 16px;
-}
-
-.tabs button:hover {
-  background-color: lightblue;
-}
-
-/* Active tab styling */
-.tabs button.active {
-  background-color: lightblue;
-  color: black;
-}
-
-.tab-content {
-  border: 1px solid #ccc;
-  padding: 20px;
-  border-radius: 10px;
-  background-color: #fff;
-  margin-top: 20px;
-}
-
-/* Plaid button styling */
-button {
-  background-color: #DAA520;
-  color: black;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-button:hover {
-  background-color: lightblue;
+      {/* Tab Content */}
+      <div className="tab-content">
+        {renderContent()}
+      </div>
+    </Flex>
+  );
 }
