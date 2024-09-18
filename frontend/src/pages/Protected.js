@@ -10,10 +10,10 @@ const logger = new ConsoleLogger("Protected");
 
 export default function Protected() {
   const [items, setItems] = useState([]);
-  const [activeTab, setActiveTab] = useState('accounts');
-  const [showPopup, setShowPopup] = useState(null);  // Track which card's popup is active
+  const [activeTab, setActiveTab] = useState('accounts'); // Add state for tab management
+  const [selectedCardId, setSelectedCardId] = useState(null); // Track which Manage button was clicked
   const client = generateClient();
-  const today = new Date();
+  const today = new Date(); // Get today's date
 
   const getItems = async () => {
     try {
@@ -33,24 +33,18 @@ export default function Protected() {
 
   const isDueDatePassed = (dueDate) => {
     const dueDateObj = new Date(dueDate);
-    return dueDateObj < today;
+    return dueDateObj < today; // Check if due date is before today
   };
 
-  const handleManageClick = (id) => {
-    if (showPopup === id) {
-      setShowPopup(null);  // Close popup if clicking the same manage button again
-    } else {
-      setShowPopup(id);  // Open the popup for the clicked card
-    }
+  // Handle opening the modal for the specific card
+  const handleManageClick = (cardId) => {
+    setSelectedCardId(selectedCardId === cardId ? null : cardId); // Toggle modal for the specific card
   };
 
-  const closePopup = () => {
-    setShowPopup(null);
-  };
-
+  // Tab content rendering based on active tab
   const renderContent = () => {
     switch (activeTab) {
-      case 'accounts':
+      case 'accounts': // Updated "Upcoming Bills" with card view
         return (
           <View>
             <Heading>Upcoming Bills</Heading>
@@ -60,7 +54,7 @@ export default function Protected() {
                   <View
                     key={card.id}
                     className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''}`}
-                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: '250px', backgroundColor: '#f9f9f9', position: 'relative' }}
+                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: '250px', backgroundColor: '#f9f9f9', position: 'relative' }} // Add position: relative to parent card for modal positioning
                   >
                     <Heading level={4}>{card.bankTitle}</Heading>
                     <p>Bill Amount: ${card.billAmount}</p>
@@ -69,17 +63,11 @@ export default function Protected() {
                     <Button style={{ backgroundColor: '#DAA520', color: 'black' }} onClick={() => handleManageClick(card.id)}>
                       Manage
                     </Button>
-
-                    {/* Modal for Manage Button */}
-                    {showPopup === card.id && (
+                    {selectedCardId === card.id && (
                       <div className="modal">
-                        <div className="modal-header">Manage Options</div>
-                        <div className="modal-row">
-                          <Button className="modal-button" onClick={closePopup}>PayNow</Button>
-                          <Button className="modal-button" onClick={closePopup}>AutoPay</Button>
-                          <Button className="modal-button" onClick={closePopup}>Scheduled</Button>
-                        </div>
-                        <Button className="modal-button" onClick={closePopup}>Close</Button>
+                        <Button className="small-button">Pay Now</Button>
+                        <Button className="small-button">AutoPay</Button>
+                        <Button className="small-button">Scheduled</Button>
                       </div>
                     )}
                   </View>
@@ -90,21 +78,21 @@ export default function Protected() {
             )}
           </View>
         );
-      case 'scheduledBills':
+      case 'scheduledBills': // New Scheduled Bills tab content
         return (
           <View>
             <Heading>Scheduled Bills</Heading>
             <p>Your scheduled bills will be displayed here.</p>
           </View>
         );
-      case 'history':
+      case 'history': // Payment History tab
         return (
           <View>
             <Heading>Payment History</Heading>
             <p>Your payment history will be displayed here.</p>
           </View>
         );
-      case 'manageAccount':
+      case 'manageAccount': // Add/Delete Account tab
         return (
           <View>
             <Plaid getItems={getItems} />
@@ -116,7 +104,7 @@ export default function Protected() {
             )}
           </View>
         );
-      case 'profile':
+      case 'profile': // Profile tab
         return (
           <View>
             <Heading>Your Profile</Heading>
@@ -131,20 +119,20 @@ export default function Protected() {
   return (
     <Flex direction="column" style={{ padding: '20px', textAlign: 'center' }}>
       <Heading>Your Dashboard</Heading>
-
+      
       {/* Tab Buttons */}
       <div className="tabs">
         <Button
           className={activeTab === 'accounts' ? 'active' : ''}
           onClick={() => setActiveTab('accounts')}
         >
-          Upcoming Bills
+          Upcoming Bills {/* Button renamed from "Accounts Linked" */}
         </Button>
         <Button
           className={activeTab === 'scheduledBills' ? 'active' : ''}
           onClick={() => setActiveTab('scheduledBills')}
         >
-          Scheduled Bills
+          Scheduled Bills {/* New Tab */}
         </Button>
         <Button
           className={activeTab === 'history' ? 'active' : ''}

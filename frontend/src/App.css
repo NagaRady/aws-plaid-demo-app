@@ -44,11 +44,11 @@ nav {
   width: 250px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
-  position: relative;
 }
 
 .bill-card.greyed-out {
   background-color: #d3d3d3;
+  /* Greyed out if due date has passed */
   color: #777;
 }
 
@@ -97,6 +97,7 @@ nav {
   background-color: lightblue;
 }
 
+/* Active tab styling */
 .tabs button.active {
   background-color: lightblue;
   color: black;
@@ -110,40 +111,46 @@ nav {
   margin-top: 20px;
 }
 
-/* Popup Modal Styling */
+/* Modal Styling for popup */
 .modal {
   position: absolute;
   top: 50px;
-  right: 0;
+  /* Adjust based on the position next to the Manage button */
+  left: 0;
   background-color: white;
-  padding: 10px;
   border: 1px solid #ccc;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  width: 200px;
-}
-
-.modal-header {
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.modal-row {
   display: flex;
-  justify-content: space-around;
-  /* Horizontal arrangement */
+  gap: 10px;
 }
 
-.modal-button {
+/* Small Button styling */
+.small-button {
   background-color: #DAA520;
   color: black;
   border: none;
   padding: 5px 10px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
 }
 
-.modal-button:hover {
+.small-button:hover {
+  background-color: lightblue;
+}
+
+/* Plaid button styling */
+button {
+  background-color: #DAA520;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
   background-color: lightblue;
 }
