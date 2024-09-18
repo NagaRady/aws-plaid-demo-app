@@ -88,25 +88,23 @@ export default function Protected() {
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
                     
                     {/* Pay button in footer center */}
-                    {!expandedCardIndex === index && (
-                      <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                        <Button
-                          className="pay-button"
-                          onClick={() => setOpenModalIndex(openModalIndex === index ? null : index)} // Toggle modal
-                          style={{ backgroundColor: '#DAA520', color: 'black' }}
-                        >
-                          Pay
-                        </Button>
+                    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                      <Button
+                        className="pay-button"
+                        onClick={() => setOpenModalIndex(openModalIndex === index ? null : index)} // Toggle modal
+                        style={{ backgroundColor: '#DAA520', color: 'black' }}
+                      >
+                        Pay
+                      </Button>
 
-                        {/* Show the modal only for the clicked Pay button */}
-                        {openModalIndex === index && (
-                          <div className="modal" ref={modalRef}>
-                            <Button className="small-button" onClick={() => handlePayNowClick(index)}>PayNow</Button>
-                            <Button className="small-button">AutoPay</Button>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                      {/* Show the modal only for the clicked Pay button */}
+                      {openModalIndex === index && !expandedCardIndex && (
+                        <div className="modal" ref={modalRef}>
+                          <Button className="small-button" onClick={() => handlePayNowClick(index)}>PayNow</Button>
+                          <Button className="small-button">AutoPay</Button>
+                        </div>
+                      )}
+                    </div>
 
                     {/* Expanded card options */}
                     {expandedCardIndex === index && (
