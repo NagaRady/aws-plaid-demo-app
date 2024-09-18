@@ -132,4 +132,39 @@ button:hover {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0,
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Corrected the unclosed bracket */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.modal-row {
+  margin: 10px 0;
+}
+
+.modal-button {
+  background-color: #DAA520;
+  color: black;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.modal-button:hover {
+  background-color: lightblue;
+}
