@@ -52,6 +52,7 @@ nav {
 
 .bill-card.greyed-out {
   background-color: #d3d3d3;
+  /* Greyed out if due date has passed */
   color: #777;
 }
 
@@ -133,8 +134,8 @@ nav {
   width: 75%;
   display: flex;
   justify-content: space-around;
-  font-size: 10px;
-  /* Smaller font size */
+  font-size: 0.75rem;
+  /* Smaller font size for modal text */
 }
 
 /* Small Button styling for PayNow and AutoPay */
@@ -142,14 +143,14 @@ nav {
   background-color: #DAA520;
   color: black;
   border: none;
-  padding: 5px 8px;
-  /* Reduced padding */
+  padding: 5px 10px;
+  /* Smaller padding */
   cursor: pointer;
-  font-size: 10px;
-  /* Smaller font size */
-  min-width: 60px;
-  /* Ensures buttons are not too small */
+  font-size: 0.75rem;
+  /* Smaller button font size */
   text-align: center;
+  min-width: 50px;
+  /* Minimum width to prevent it from being too small */
 }
 
 .small-button:hover {
