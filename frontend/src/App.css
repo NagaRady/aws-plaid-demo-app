@@ -71,10 +71,13 @@ nav {
   background-color: #DAA520;
   color: black;
   border: none;
-  padding: 10px 20px;
+  padding: 8px 16px;
+  /* Decreased padding for smaller button size */
   cursor: pointer;
   text-align: center;
   margin-top: 10px;
+  font-size: 0.75rem;
+  /* Reduced font size */
 }
 
 .bill-card .pay-button:hover {
@@ -134,7 +137,7 @@ nav {
   width: 75%;
   display: flex;
   justify-content: space-around;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   /* Smaller font size for modal text */
 }
 
@@ -143,14 +146,14 @@ nav {
   background-color: #DAA520;
   color: black;
   border: none;
-  padding: 3px 8px;
-  /* Smaller padding */
+  padding: 4px 10px;
+  /* Decreased padding for smaller button size */
   cursor: pointer;
   font-size: 0.65rem;
-  /* Smaller button font size */
+  /* Reduced button font size */
   text-align: center;
-  min-width: 25px;
-  /* Minimum width to prevent it from being too small */
+  min-width: 50px;
+  /* Minimum width for buttons */
 }
 
 .small-button:hover {
