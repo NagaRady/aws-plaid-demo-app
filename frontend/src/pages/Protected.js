@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import { ConsoleLogger } from 'aws-amplify/utils';
-import { View, Heading, Flex, Button, SelectField, Radio } from '@aws-amplify/ui-react';
+import { View, Heading, Flex, Button } from '@aws-amplify/ui-react';
 import { getItems as GetItems } from '../graphql/queries';
 import Plaid from '../components/Plaid';
 import Institutions from '../components/Institutions';
@@ -12,7 +12,7 @@ export default function Protected() {
   const [items, setItems] = useState([]);
   const [activeTab, setActiveTab] = useState('accounts');
   const [openModalIndex, setOpenModalIndex] = useState(null); // Track clicked Pay button
-  const [expandedCardIndex, setExpandedCardIndex] = useState(null); // Track expanded card index
+  const [expandedCardIndex, setExpandedCardIndex] = useState(null); // Track expanded card
   const client = generateClient();
   const today = new Date();
   const modalRef = useRef(null); // Reference to the modal
@@ -53,8 +53,8 @@ export default function Protected() {
   };
 
   const handlePayNowClick = (index) => {
-    setExpandedCardIndex(index); // Expand the card
-    setOpenModalIndex(null); // Close the modal when expanded
+    setExpandedCardIndex(index); // Expand the clicked card
+    setOpenModalIndex(null); // Close the modal
   };
 
   const renderContent = () => {
@@ -68,8 +68,17 @@ export default function Protected() {
                 {items.map((card, index) => (
                   <View
                     key={card.id}
-                    className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''}`}
-                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: '250px', backgroundColor: '#f9f9f9', position: 'relative' }}
+                    className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''} ${expandedCardIndex === index ? 'expanded-card' : ''}`}
+                    style={{
+                      padding: '20px',
+                      border: '1px solid #ccc',
+                      margin: '10px',
+                      borderRadius: '10px',
+                      backgroundColor: '#f9f9f9',
+                      position: 'relative',
+                      width: expandedCardIndex === index ? '80%' : '250px', // Expanded width for the clicked card
+                      height: expandedCardIndex === index ? 'auto' : 'auto' // Expand height if needed
+                    }}
                   >
                     <Heading level={4} style={{ textAlign: 'center' }}>
                       {card.bankTitle}
@@ -78,41 +87,52 @@ export default function Protected() {
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
                     
-                    <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                      {expandedCardIndex === index ? (
-                        <div className="expanded-payment-options">
-                          <SelectField label="Select Payment Method">
-                            <option value="checking">Checking Account 1</option>
-                            <option value="savings">Savings Account 1</option>
-                          </SelectField>
+                    {/* Pay button in footer center */}
+                    {!expandedCardIndex === index && (
+                      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                        <Button
+                          className="pay-button"
+                          onClick={() => setOpenModalIndex(openModalIndex === index ? null : index)} // Toggle modal
+                          style={{ backgroundColor: '#DAA520', color: 'black' }}
+                        >
+                          Pay
+                        </Button>
 
-                          <div style={{ margin: '10px 0' }}>
-                            <Radio value="standard" label="Standard (3-4 days)" name={`paymentSpeed-${index}`} />
-                            <Radio value="expedited" label="Expedited (1-2 days)" name={`paymentSpeed-${index}`} />
+                        {/* Show the modal only for the clicked Pay button */}
+                        {openModalIndex === index && (
+                          <div className="modal" ref={modalRef}>
+                            <Button className="small-button" onClick={() => handlePayNowClick(index)}>PayNow</Button>
+                            <Button className="small-button">AutoPay</Button>
                           </div>
+                        )}
+                      </div>
+                    )}
 
+                    {/* Expanded card options */}
+                    {expandedCardIndex === index && (
+                      <div className="expanded-payment-options">
+                        <label>
+                          Select Payment Method:
+                          <select>
+                            <option>Checking</option>
+                            <option>Savings</option>
+                          </select>
+                        </label>
+
+                        <div>
+                          <label>
+                            <input type="radio" name="payment-speed" value="standard" /> Standard (3-4 days)
+                          </label>
+                          <label style={{ marginLeft: '10px' }}>
+                            <input type="radio" name="payment-speed" value="expedited" /> Expedited (7-10 days)
+                          </label>
+                        </div>
+
+                        <div style={{ textAlign: 'center', marginTop: '10px' }}>
                           <Button className="pay-it-button">Pay It</Button>
                         </div>
-                      ) : (
-                        <>
-                          <Button
-                            className="pay-button"
-                            onClick={() => setOpenModalIndex(openModalIndex === index ? null : index)}
-                          >
-                            Pay
-                          </Button>
-
-                          {openModalIndex === index && (
-                            <div className="modal" ref={modalRef}>
-                              <Button className="small-button" onClick={() => handlePayNowClick(index)}>
-                                PayNow
-                              </Button>
-                              <Button className="small-button">AutoPay</Button>
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </View>
                 ))}
               </Flex>

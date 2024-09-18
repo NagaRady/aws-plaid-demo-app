@@ -43,11 +43,16 @@ nav {
   background-color: #f9f9f9;
   width: 250px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, width 0.3s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+}
+
+.bill-card.expanded-card {
+  width: 80% !important;
+  /* Expand horizontally */
 }
 
 .bill-card.greyed-out {
