@@ -149,7 +149,7 @@ nav {
   font-size: 0.65rem;
   /* Smaller button font size */
   text-align: center;
-  min-width: 50px;
+  min-width: 25px;
   /* Minimum width to prevent it from being too small */
 }
 
