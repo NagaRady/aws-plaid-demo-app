@@ -10,9 +10,8 @@ const logger = new ConsoleLogger("Protected");
 
 export default function Protected() {
   const [items, setItems] = useState([]);
-  const [activeTab, setActiveTab] = useState('accounts'); 
-  const [showModal, setShowModal] = useState(false); // Modal state
-  const [selectedCard, setSelectedCard] = useState(null); // For selected card details
+  const [activeTab, setActiveTab] = useState('accounts');
+  const [showPopup, setShowPopup] = useState(null);
   const client = generateClient();
   const today = new Date();
 
@@ -37,17 +36,14 @@ export default function Protected() {
     return dueDateObj < today;
   };
 
-  const handleManageClick = (card) => {
-    setSelectedCard(card);
-    setShowModal(true);
+  const handleManageClick = (id) => {
+    setShowPopup(id);
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    setSelectedCard(null);
+  const closePopup = () => {
+    setShowPopup(null);
   };
 
-  // Tab content rendering based on active tab
   const renderContent = () => {
     switch (activeTab) {
       case 'accounts':
@@ -60,13 +56,32 @@ export default function Protected() {
                   <View
                     key={card.id}
                     className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''}`}
-                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: '250px', backgroundColor: '#f9f9f9' }}
+                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: '250px', backgroundColor: '#f9f9f9', position: 'relative' }}
                   >
                     <Heading level={4}>{card.bankTitle}</Heading>
                     <p>Bill Amount: ${card.billAmount}</p>
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
-                    <Button style={{ backgroundColor: '#DAA520', color: 'black' }} onClick={() => handleManageClick(card)}>Manage</Button>
+                    <Button style={{ backgroundColor: '#DAA520', color: 'black' }} onClick={() => handleManageClick(card.id)}>
+                      Manage
+                    </Button>
+
+                    {/* Modal for Manage Button */}
+                    {showPopup === card.id && (
+                      <div className="modal">
+                        <div className="modal-header">Manage Options</div>
+                        <div className="modal-row">
+                          <Button className="modal-button" onClick={closePopup}>PayNow</Button>
+                        </div>
+                        <div className="modal-row">
+                          <Button className="modal-button" onClick={closePopup}>AutoPay</Button>
+                        </div>
+                        <div className="modal-row">
+                          <Button className="modal-button" onClick={closePopup}>Scheduled</Button>
+                        </div>
+                        <Button className="modal-button" onClick={closePopup}>Close</Button>
+                      </div>
+                    )}
                   </View>
                 ))}
               </Flex>
@@ -116,22 +131,37 @@ export default function Protected() {
   return (
     <Flex direction="column" style={{ padding: '20px', textAlign: 'center' }}>
       <Heading>Your Dashboard</Heading>
-      
+
       {/* Tab Buttons */}
       <div className="tabs">
-        <Button className={activeTab === 'accounts' ? 'active' : ''} onClick={() => setActiveTab('accounts')}>
+        <Button
+          className={activeTab === 'accounts' ? 'active' : ''}
+          onClick={() => setActiveTab('accounts')}
+        >
           Upcoming Bills
         </Button>
-        <Button className={activeTab === 'scheduledBills' ? 'active' : ''} onClick={() => setActiveTab('scheduledBills')}>
+        <Button
+          className={activeTab === 'scheduledBills' ? 'active' : ''}
+          onClick={() => setActiveTab('scheduledBills')}
+        >
           Scheduled Bills
         </Button>
-        <Button className={activeTab === 'history' ? 'active' : ''} onClick={() => setActiveTab('history')}>
+        <Button
+          className={activeTab === 'history' ? 'active' : ''}
+          onClick={() => setActiveTab('history')}
+        >
           Payment History
         </Button>
-        <Button className={activeTab === 'manageAccount' ? 'active' : ''} onClick={() => setActiveTab('manageAccount')}>
+        <Button
+          className={activeTab === 'manageAccount' ? 'active' : ''}
+          onClick={() => setActiveTab('manageAccount')}
+        >
           Add/Delete Account
         </Button>
-        <Button className={activeTab === 'profile' ? 'active' : ''} onClick={() => setActiveTab('profile')}>
+        <Button
+          className={activeTab === 'profile' ? 'active' : ''}
+          onClick={() => setActiveTab('profile')}
+        >
           Profile
         </Button>
       </div>
@@ -140,27 +170,6 @@ export default function Protected() {
       <div className="tab-content">
         {renderContent()}
       </div>
-
-      {/* Custom Modal */}
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              {selectedCard.bankTitle} ({selectedCard.bankTitle.slice(-4)})
-            </div>
-            <div className="modal-row">Balance Due: ${selectedCard.billAmount}</div>
-            <div className="modal-row">Due Date: {new Date(selectedCard.dueDate).toLocaleDateString()}</div>
-            <div className="modal-row">
-              Pay With:
-              <select>
-                <option>Checking Account 1</option>
-                <option>Savings Account 2</option>
-              </select>
-            </div>
-            <Button className="modal-button" onClick={closeModal}>Close</Button>
-          </div>
-        </div>
-      )}
     </Flex>
   );
 }
