@@ -11,6 +11,7 @@ const logger = new ConsoleLogger("Protected");
 export default function Protected() {
   const [items, setItems] = useState([]);
   const [activeTab, setActiveTab] = useState('accounts');
+  const [showPopup, setShowPopup] = useState(null); // State to track which Pay button was clicked
   const client = generateClient();
   const today = new Date();
 
@@ -35,6 +36,10 @@ export default function Protected() {
     return dueDateObj < today;
   };
 
+  const handlePayClick = (cardId) => {
+    setShowPopup((prev) => (prev === cardId ? null : cardId)); // Toggle popup for the clicked Pay button
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'accounts':
@@ -56,11 +61,24 @@ export default function Protected() {
                     <p>Bill Amount: ${card.billAmount}</p>
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
-                    
+
                     {/* Pay button in footer center */}
                     <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                      <Button style={{ backgroundColor: '#DAA520', color: 'black' }}>Pay</Button>
+                      <Button
+                        onClick={() => handlePayClick(card.id)}
+                        style={{ backgroundColor: '#DAA520', color: 'black' }}
+                      >
+                        Pay
+                      </Button>
                     </div>
+
+                    {/* Popup for the Pay button clicked */}
+                    {showPopup === card.id && (
+                      <div className="modal" style={{ position: 'absolute', backgroundColor: 'white', border: '1px solid #ccc', padding: '10px', borderRadius: '5px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', marginTop: '10px', width: '100%' }}>
+                        <Button className="small-button">PayNow</Button>
+                        <Button className="small-button">AutoPay</Button>
+                      </div>
+                    )}
                   </View>
                 ))}
               </Flex>
@@ -110,7 +128,7 @@ export default function Protected() {
   return (
     <Flex direction="column" style={{ padding: '20px', textAlign: 'center' }}>
       <Heading>Your Dashboard</Heading>
-      
+
       {/* Tab Buttons */}
       <div className="tabs">
         <Button
