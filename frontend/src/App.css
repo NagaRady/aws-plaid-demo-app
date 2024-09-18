@@ -47,6 +47,8 @@ nav {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
+  /* Added relative positioning for Pay button popup */
 }
 
 .bill-card.greyed-out {
@@ -122,19 +124,19 @@ nav {
 /* Modal Styling for popup underneath Pay button */
 .modal {
   position: absolute;
-  top: 50px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 100%;
+  left: 12.5%;
+  /* Position relative to the clicked Pay button */
   background-color: white;
   border: 1px solid #ccc;
   padding: 10px;
   border-radius: 5px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  width: 75%;
+  /* 3/4th width of the card */
   display: flex;
   justify-content: space-around;
-  width: 180px;
-  /* Small popup width */
 }
 
 /* Small Button styling for PayNow and AutoPay */
