@@ -116,7 +116,7 @@ nav {
   top: 50px;
   right: 0;
   background-color: white;
-  padding: 20px;
+  padding: 10px;
   border: 1px solid #ccc;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -130,15 +130,16 @@ nav {
 }
 
 .modal-row {
-  margin: 10px 0;
+  display: flex;
+  justify-content: space-around;
+  /* Horizontal arrangement */
 }
 
 .modal-button {
-  width: 100%;
   background-color: #DAA520;
   color: black;
   border: none;
-  padding: 10px;
+  padding: 5px 10px;
   cursor: pointer;
   font-size: 14px;
 }

@@ -11,7 +11,7 @@ const logger = new ConsoleLogger("Protected");
 export default function Protected() {
   const [items, setItems] = useState([]);
   const [activeTab, setActiveTab] = useState('accounts');
-  const [showPopup, setShowPopup] = useState(null);
+  const [showPopup, setShowPopup] = useState(null);  // Track which card's popup is active
   const client = generateClient();
   const today = new Date();
 
@@ -37,7 +37,11 @@ export default function Protected() {
   };
 
   const handleManageClick = (id) => {
-    setShowPopup(id);
+    if (showPopup === id) {
+      setShowPopup(null);  // Close popup if clicking the same manage button again
+    } else {
+      setShowPopup(id);  // Open the popup for the clicked card
+    }
   };
 
   const closePopup = () => {
@@ -72,11 +76,7 @@ export default function Protected() {
                         <div className="modal-header">Manage Options</div>
                         <div className="modal-row">
                           <Button className="modal-button" onClick={closePopup}>PayNow</Button>
-                        </div>
-                        <div className="modal-row">
                           <Button className="modal-button" onClick={closePopup}>AutoPay</Button>
-                        </div>
-                        <div className="modal-row">
                           <Button className="modal-button" onClick={closePopup}>Scheduled</Button>
                         </div>
                         <Button className="modal-button" onClick={closePopup}>Close</Button>
