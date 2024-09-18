@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import { ConsoleLogger } from 'aws-amplify/utils';
-import { View, Heading, Flex } from '@aws-amplify/ui-react';
+import { View, Heading, Flex, Button } from '@aws-amplify/ui-react';
 import { getItems as GetItems } from '../graphql/queries';
 import Plaid from '../components/Plaid';
 import Institutions from '../components/Institutions';
@@ -10,9 +10,9 @@ const logger = new ConsoleLogger("Protected");
 
 export default function Protected() {
   const [items, setItems] = useState([]);
-  const [activeTab, setActiveTab] = useState('accounts'); // Add state for tab management
+  const [activeTab, setActiveTab] = useState('accounts');
   const client = generateClient();
-  const today = new Date(); // Get today's date
+  const today = new Date();
 
   const getItems = async () => {
     try {
@@ -32,13 +32,12 @@ export default function Protected() {
 
   const isDueDatePassed = (dueDate) => {
     const dueDateObj = new Date(dueDate);
-    return dueDateObj < today; // Check if due date is before today
+    return dueDateObj < today;
   };
 
-  // Tab content rendering based on active tab
   const renderContent = () => {
     switch (activeTab) {
-      case 'accounts': // Updated "Upcoming Bills" with card view
+      case 'accounts':
         return (
           <View>
             <Heading>Upcoming Bills</Heading>
@@ -50,10 +49,18 @@ export default function Protected() {
                     className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''}`}
                     style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: '250px', backgroundColor: '#f9f9f9' }}
                   >
-                    <Heading level={4}>{card.bankTitle}</Heading>
+                    {/* Bank Name in header center */}
+                    <Heading level={4} style={{ textAlign: 'center' }}>
+                      {card.bankTitle}
+                    </Heading>
                     <p>Bill Amount: ${card.billAmount}</p>
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
+                    
+                    {/* Pay button in footer center */}
+                    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                      <Button style={{ backgroundColor: '#DAA520', color: 'black' }}>Pay</Button>
+                    </div>
                   </View>
                 ))}
               </Flex>
@@ -62,21 +69,21 @@ export default function Protected() {
             )}
           </View>
         );
-      case 'scheduledBills': // New Scheduled Bills tab content
+      case 'scheduledBills':
         return (
           <View>
             <Heading>Scheduled Bills</Heading>
             <p>Your scheduled bills will be displayed here.</p>
           </View>
         );
-      case 'history': // Payment History tab
+      case 'history':
         return (
           <View>
             <Heading>Payment History</Heading>
             <p>Your payment history will be displayed here.</p>
           </View>
         );
-      case 'manageAccount': // Add/Delete Account tab
+      case 'manageAccount':
         return (
           <View>
             <Plaid getItems={getItems} />
@@ -88,7 +95,7 @@ export default function Protected() {
             )}
           </View>
         );
-      case 'profile': // Profile tab
+      case 'profile':
         return (
           <View>
             <Heading>Your Profile</Heading>
@@ -106,36 +113,36 @@ export default function Protected() {
       
       {/* Tab Buttons */}
       <div className="tabs">
-        <button
+        <Button
           className={activeTab === 'accounts' ? 'active' : ''}
           onClick={() => setActiveTab('accounts')}
         >
           Upcoming Bills
-        </button>
-        <button
+        </Button>
+        <Button
           className={activeTab === 'scheduledBills' ? 'active' : ''}
           onClick={() => setActiveTab('scheduledBills')}
         >
           Scheduled Bills
-        </button>
-        <button
+        </Button>
+        <Button
           className={activeTab === 'history' ? 'active' : ''}
           onClick={() => setActiveTab('history')}
         >
           Payment History
-        </button>
-        <button
+        </Button>
+        <Button
           className={activeTab === 'manageAccount' ? 'active' : ''}
           onClick={() => setActiveTab('manageAccount')}
         >
           Add/Delete Account
-        </button>
-        <button
+        </Button>
+        <Button
           className={activeTab === 'profile' ? 'active' : ''}
           onClick={() => setActiveTab('profile')}
         >
           Profile
-        </button>
+        </Button>
       </div>
 
       {/* Tab Content */}

@@ -44,6 +44,9 @@ nav {
   width: 250px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .bill-card.greyed-out {
@@ -52,23 +55,28 @@ nav {
   color: #777;
 }
 
+/* Centered Bank Name in header */
 .bill-card h4 {
   margin-bottom: 10px;
+  text-align: center;
 }
 
 .bill-card p {
   margin: 5px 0;
 }
 
-.bill-card button {
+/* Pay Button Styling in footer */
+.bill-card .pay-button {
   background-color: #DAA520;
   color: black;
   border: none;
-  padding: 10px;
+  padding: 10px 20px;
   cursor: pointer;
+  text-align: center;
+  margin-top: 10px;
 }
 
-.bill-card button:hover {
+.bill-card .pay-button:hover {
   background-color: lightblue;
 }
 
