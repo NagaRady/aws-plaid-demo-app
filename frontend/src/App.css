@@ -143,10 +143,10 @@ nav {
   background-color: #DAA520;
   color: black;
   border: none;
-  padding: 5px 10px;
+  padding: 3px 8px;
   /* Smaller padding */
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   /* Smaller button font size */
   text-align: center;
   min-width: 50px;
