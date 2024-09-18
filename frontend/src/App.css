@@ -160,6 +160,27 @@ nav {
   background-color: lightblue;
 }
 
+/* Expanded Payment Options Styling */
+.expanded-payment-options {
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+}
+
+/* Pay It button styling */
+.pay-it-button {
+  background-color: #DAA520;
+  color: black;
+  border: none;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: 0.7rem;
+}
+
+.pay-it-button:hover {
+  background-color: lightblue;
+}
+
 /* Plaid button styling */
 button {
   background-color: #DAA520;

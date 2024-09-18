@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import { ConsoleLogger } from 'aws-amplify/utils';
-import { View, Heading, Flex, Button } from '@aws-amplify/ui-react';
+import { View, Heading, Flex, Button, SelectField, Radio } from '@aws-amplify/ui-react';
 import { getItems as GetItems } from '../graphql/queries';
 import Plaid from '../components/Plaid';
 import Institutions from '../components/Institutions';
@@ -12,6 +12,7 @@ export default function Protected() {
   const [items, setItems] = useState([]);
   const [activeTab, setActiveTab] = useState('accounts');
   const [openModalIndex, setOpenModalIndex] = useState(null); // Track clicked Pay button
+  const [expandedCardIndex, setExpandedCardIndex] = useState(null); // Track expanded card index
   const client = generateClient();
   const today = new Date();
   const modalRef = useRef(null); // Reference to the modal
@@ -51,6 +52,11 @@ export default function Protected() {
     return dueDateObj < today;
   };
 
+  const handlePayNowClick = (index) => {
+    setExpandedCardIndex(index); // Expand the card
+    setOpenModalIndex(null); // Close the modal when expanded
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'accounts':
@@ -72,22 +78,39 @@ export default function Protected() {
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
                     
-                    {/* Pay button in footer center */}
                     <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                      <Button
-                        className="pay-button"
-                        onClick={() => setOpenModalIndex(openModalIndex === index ? null : index)} // Toggle modal
-                        style={{ backgroundColor: '#DAA520', color: 'black' }}
-                      >
-                        Pay
-                      </Button>
+                      {expandedCardIndex === index ? (
+                        <div className="expanded-payment-options">
+                          <SelectField label="Select Payment Method">
+                            <option value="checking">Checking Account 1</option>
+                            <option value="savings">Savings Account 1</option>
+                          </SelectField>
 
-                      {/* Show the modal only for the clicked Pay button */}
-                      {openModalIndex === index && (
-                        <div className="modal" ref={modalRef}>
-                          <Button className="small-button">PayNow</Button>
-                          <Button className="small-button">AutoPay</Button>
+                          <div style={{ margin: '10px 0' }}>
+                            <Radio value="standard" label="Standard (3-4 days)" name={`paymentSpeed-${index}`} />
+                            <Radio value="expedited" label="Expedited (1-2 days)" name={`paymentSpeed-${index}`} />
+                          </div>
+
+                          <Button className="pay-it-button">Pay It</Button>
                         </div>
+                      ) : (
+                        <>
+                          <Button
+                            className="pay-button"
+                            onClick={() => setOpenModalIndex(openModalIndex === index ? null : index)}
+                          >
+                            Pay
+                          </Button>
+
+                          {openModalIndex === index && (
+                            <div className="modal" ref={modalRef}>
+                              <Button className="small-button" onClick={() => handlePayNowClick(index)}>
+                                PayNow
+                              </Button>
+                              <Button className="small-button">AutoPay</Button>
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   </View>
