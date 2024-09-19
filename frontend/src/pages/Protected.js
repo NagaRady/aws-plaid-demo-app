@@ -17,7 +17,7 @@ export default function Protected() {
   const [paidCards, setPaidCards] = useState([]); // Track cards where Pay button should be hidden
   const client = generateClient();
   const today = new Date();
-  const modalRef = useRef(null); // Reference to the modal
+  const expandedCardRef = useRef(null); // Reference to the expanded card
 
   const getItems = async () => {
     try {
@@ -35,15 +35,15 @@ export default function Protected() {
     getItems();
   }, []);
 
-  // Close the modal if clicked outside
+  // Close the expanded card or modal if clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
+      if (expandedCardRef.current && !expandedCardRef.current.contains(event.target)) {
         setOpenModalIndex(null);
         setExpandedCardIndex(null);
       }
     };
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -81,6 +81,7 @@ export default function Protected() {
                     key={card.id}
                     className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''} ${expandedCardIndex === index ? 'expanded-card' : ''}`}
                     style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: expandedCardIndex === index ? '80%' : '250px', backgroundColor: '#f9f9f9', position: 'relative' }}
+                    ref={expandedCardIndex === index ? expandedCardRef : null} // Assign ref only to the expanded card
                   >
                     <Heading level={4} style={{ textAlign: 'center' }}>
                       {card.bankTitle}
@@ -102,7 +103,7 @@ export default function Protected() {
 
                         {/* Show the modal only for the clicked Pay button */}
                         {openModalIndex === index && (
-                          <div className="modal" ref={modalRef}>
+                          <div className="modal">
                             <Button className="small-button" onClick={() => setExpandedCardIndex(index)}>PayNow</Button>
                             <Button className="small-button">AutoPay</Button>
                           </div>

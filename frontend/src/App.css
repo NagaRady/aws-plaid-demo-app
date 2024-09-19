@@ -50,20 +50,16 @@ nav {
   position: relative;
 }
 
+.bill-card.expanded-card {
+  width: 80%;
+  height: auto;
+  /* Adjust the height dynamically when the card expands */
+}
+
 .bill-card.greyed-out {
   background-color: #d3d3d3;
   /* Greyed out if due date has passed */
   color: #777;
-}
-
-/* Expanded card styling */
-.expanded-card {
-  width: 80% !important;
-  /* Expand horizontally */
-  height: auto;
-  /* Expand vertically */
-  padding: 30px;
-  /* Extra padding when expanded */
 }
 
 /* Centered Bank Name in header */
@@ -92,71 +88,10 @@ nav {
   background-color: lightblue;
 }
 
-/* Modal Styling for popup underneath Pay button */
-.modal {
-  position: absolute;
-  top: 100%;
-  left: 12.5%;
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 5px;
-  border-radius: 5px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  width: 75%;
-  display: flex;
-  justify-content: space-around;
-  font-size: 0.75rem;
-}
-
-/* Expanded payment options styling */
-.expanded-payment-options {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* Select dropdown */
-.expanded-payment-options select {
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 0.8rem;
-}
-
-/* Radio buttons */
-.expanded-payment-options input[type="radio"] {
-  margin-right: 5px;
-}
-
-/* Small Button styling for PayNow and AutoPay */
-.small-button {
-  background-color: #DAA520;
-  color: black;
-  border: none;
-  padding: 4px 10px;
-  cursor: pointer;
-  font-size: 0.75rem;
-  text-align: center;
-}
-
-.small-button:hover {
-  background-color: lightblue;
-}
-
-/* Pay It button styling */
-.pay-it-button {
-  background-color: #DAA520;
-  color: black;
-  padding: 8px 16px;
-  font-size: 0.75rem;
-  border: none;
-  cursor: pointer;
-}
-
-.pay-it-button:hover {
-  background-color: lightblue;
+/* Adjust font size of "Login or Signup!" */
+.custom-login-text {
+  font-size: 2rem;
+  font-weight: bold;
 }
 
 /* Styling for the tabs in Protected.js */
@@ -192,8 +127,88 @@ nav {
   margin-top: 20px;
 }
 
-/* Adjust font size of "Login or Signup!" */
-.custom-login-text {
-  font-size: 2rem;
-  font-weight: bold;
+/* Modal Styling for popup underneath Pay button */
+.modal {
+  position: absolute;
+  top: 100%;
+  left: 12.5%;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 75%;
+  display: flex;
+  justify-content: space-around;
+  font-size: 0.65rem;
+}
+
+/* Small Button styling for PayNow and AutoPay */
+.small-button {
+  background-color: #DAA520;
+  color: black;
+  border: none;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.65rem;
+  text-align: center;
+  min-width: 50px;
+}
+
+.small-button:hover {
+  background-color: lightblue;
+}
+
+/* Expanded payment options section */
+.expanded-payment-options {
+  margin-top: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.expanded-payment-options select {
+  padding: 5px;
+  font-size: 0.75rem;
+  margin-bottom: 10px;
+}
+
+.expanded-payment-options label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+}
+
+.expanded-payment-options input[type="radio"] {
+  margin-right: 10px;
+}
+
+.pay-it-button {
+  background-color: #DAA520;
+  color: black;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  border: none;
+  cursor: pointer;
+}
+
+.pay-it-button:hover {
+  background-color: lightblue;
+}
+
+/* Plaid button styling */
+button {
+  background-color: #DAA520;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: lightblue;
 }
