@@ -18,6 +18,7 @@ export default function Protected() {
   const [scheduledItems, setScheduledItems] = useState([]); // Cards for Scheduled Bills
   const [cancelModalIndex, setCancelModalIndex] = useState(null); // For the Cancel popup
   const [cancelledIndexes, setCancelledIndexes] = useState([]); // Track cancelled cards
+  const [paidIndexes, setPaidIndexes] = useState([]); // Track paid cards in the Upcoming Bills tab
   const client = generateClient();
   const today = new Date();
   const modalRef = useRef(null);
@@ -69,7 +70,7 @@ export default function Protected() {
 
     const itemToSchedule = items[index];
     setScheduledItems((prev) => [...prev, itemToSchedule]);
-    setItems((prevItems) => prevItems.filter((_, i) => i !== index)); // Remove from Upcoming Bills
+    setPaidIndexes((prev) => [...prev, index]); // Mark the card as paid
     setExpandedCardIndex(null); // Collapse the card
   };
 
@@ -100,7 +101,7 @@ export default function Protected() {
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
                     
-                    {expandedCardIndex !== index && (
+                    {expandedCardIndex !== index && !paidIndexes.includes(index) && (
                       <div style={{ textAlign: 'center', marginTop: '20px' }}>
                         <Button
                           className="pay-button"
