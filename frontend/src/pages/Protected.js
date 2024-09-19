@@ -21,7 +21,8 @@ export default function Protected() {
   const [paidIndexes, setPaidIndexes] = useState([]); // Track paid cards in the Upcoming Bills tab
   const client = generateClient();
   const today = new Date();
-  const modalRef = useRef(null);
+  const modalRef = useRef(null); // Reference for modals
+  const cardRef = useRef(null);  // Reference for the expanded card
 
   const getItems = async () => {
     try {
@@ -39,14 +40,16 @@ export default function Protected() {
     getItems();
   }, []);
 
-  // Close modals when clicking outside the card and reset all selections
+  // Close modals and reset everything when clicking outside the card/modal
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        modalRef.current && 
+        cardRef.current && 
+        !cardRef.current.contains(event.target) &&
+        modalRef.current &&
         !modalRef.current.contains(event.target)
       ) {
-        // Reset everything if clicked outside before hitting PayIt
+        // Reset everything if clicked outside
         setOpenModalIndex(null); // Close PayNow popup
         setExpandedCardIndex(null); // Collapse expanded card
         setPaymentMethod(''); // Reset payment method
@@ -96,6 +99,7 @@ export default function Protected() {
                   <View
                     key={card.id}
                     className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''} ${expandedCardIndex === index ? 'expanded-card' : ''}`}
+                    ref={expandedCardIndex === index ? cardRef : null}
                     style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', backgroundColor: '#f9f9f9', position: 'relative' }}
                   >
                     <Heading level={4} style={{ textAlign: 'center' }}>
