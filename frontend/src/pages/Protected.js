@@ -11,14 +11,15 @@ const logger = new ConsoleLogger("Protected");
 export default function Protected() {
   const [items, setItems] = useState([]);
   const [activeTab, setActiveTab] = useState('accounts');
-  const [openModalIndex, setOpenModalIndex] = useState(null); // Track clicked Pay button
-  const [scheduledItems, setScheduledItems] = useState([]);
-  const [cancelModalIndex, setCancelModalIndex] = useState(null); // For cancel popup
+  const [openModalIndex, setOpenModalIndex] = useState(null); // For pay modal in "Upcoming Bills"
+  const [scheduledItems, setScheduledItems] = useState([]); // For cards in "Scheduled Bills"
+  const [cancelModalIndex, setCancelModalIndex] = useState(null); // For cancel popup in "Scheduled Bills"
   const [cancelledIndexes, setCancelledIndexes] = useState([]); // Track cancelled cards
   const client = generateClient();
   const today = new Date();
-  const modalRef = useRef(null); // Reference to the modal
+  const modalRef = useRef(null);
 
+  // Fetch the items
   const getItems = async () => {
     try {
       const res = await client.graphql({
@@ -35,15 +36,13 @@ export default function Protected() {
     getItems();
   }, []);
 
-  // Close the modal if clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setOpenModalIndex(null);
-        setCancelModalIndex(null); // Close the cancel modal if clicked outside
+        setOpenModalIndex(null); // Close pay modal
+        setCancelModalIndex(null); // Close cancel modal
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -55,22 +54,26 @@ export default function Protected() {
     return dueDateObj < today;
   };
 
+  // Handle PayIt functionality
   const handlePayIt = (index) => {
     const itemToSchedule = items[index];
     setScheduledItems((prev) => [...prev, itemToSchedule]);
-    setItems((prevItems) => prevItems.filter((_, i) => i !== index)); // Remove from upcoming bills
-    setOpenModalIndex(null); // Close the modal
+    setItems((prevItems) => prevItems.filter((_, i) => i !== index)); // Remove paid card from "Upcoming Bills"
+    setOpenModalIndex(null); // Close the pay modal
   };
 
+  // Handle cancel button click
   const handleCancel = (index) => {
     setCancelModalIndex(index); // Open the cancel confirmation popup
   };
 
+  // Handle confirm cancellation
   const handleConfirmCancel = (index) => {
-    setCancelledIndexes((prev) => [...prev, index]); // Mark as cancelled
-    setCancelModalIndex(null); // Close the popup
+    setCancelledIndexes((prev) => [...prev, index]); // Mark card as cancelled
+    setCancelModalIndex(null); // Close the cancel modal
   };
 
+  // Render content based on the active tab
   const renderContent = () => {
     switch (activeTab) {
       case 'accounts':
@@ -95,13 +98,12 @@ export default function Protected() {
                     <div style={{ textAlign: 'center', marginTop: '20px' }}>
                       <Button
                         className="pay-button"
-                        onClick={() => setOpenModalIndex(openModalIndex === index ? null : index)} // Toggle modal
+                        onClick={() => setOpenModalIndex(openModalIndex === index ? null : index)}
                         style={{ backgroundColor: '#DAA520', color: 'black' }}
                       >
                         Pay
                       </Button>
 
-                      {/* Show the modal only for the clicked Pay button */}
                       {openModalIndex === index && (
                         <div className="modal" ref={modalRef}>
                           <Button className="small-button" onClick={() => handlePayIt(index)}>PayNow</Button>
@@ -199,7 +201,6 @@ export default function Protected() {
     <Flex direction="column" style={{ padding: '20px', textAlign: 'center' }}>
       <Heading>Your Dashboard</Heading>
       
-      {/* Tab Buttons */}
       <div className="tabs">
         <Button
           className={activeTab === 'accounts' ? 'active' : ''}
@@ -233,7 +234,6 @@ export default function Protected() {
         </Button>
       </div>
 
-      {/* Tab Content */}
       <div className="tab-content">
         {renderContent()}
       </div>
