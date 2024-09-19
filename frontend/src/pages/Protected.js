@@ -10,14 +10,14 @@ const logger = new ConsoleLogger("Protected");
 
 export default function Protected() {
   const [items, setItems] = useState([]);
-  const [scheduledItems, setScheduledItems] = useState([]); // Track scheduled items
   const [activeTab, setActiveTab] = useState('accounts');
   const [openModalIndex, setOpenModalIndex] = useState(null); // Track clicked Pay button
-  const [expandedCardIndex, setExpandedCardIndex] = useState(null); // Track expanded card
-  const [paidCards, setPaidCards] = useState([]); // Track cards where Pay button should be hidden
+  const [scheduledItems, setScheduledItems] = useState([]);
+  const [cancelModalIndex, setCancelModalIndex] = useState(null); // For cancel popup
+  const [cancelledIndexes, setCancelledIndexes] = useState([]); // Track cancelled cards
   const client = generateClient();
   const today = new Date();
-  const expandedCardRef = useRef(null); // Reference to the expanded card
+  const modalRef = useRef(null); // Reference to the modal
 
   const getItems = async () => {
     try {
@@ -35,12 +35,12 @@ export default function Protected() {
     getItems();
   }, []);
 
-  // Close the expanded card or modal if clicked outside
+  // Close the modal if clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (expandedCardRef.current && !expandedCardRef.current.contains(event.target)) {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
         setOpenModalIndex(null);
-        setExpandedCardIndex(null);
+        setCancelModalIndex(null); // Close the cancel modal if clicked outside
       }
     };
 
@@ -56,16 +56,19 @@ export default function Protected() {
   };
 
   const handlePayIt = (index) => {
-    // Hide the "Pay" button for the current card
-    setPaidCards([...paidCards, index]);
+    const itemToSchedule = items[index];
+    setScheduledItems((prev) => [...prev, itemToSchedule]);
+    setItems((prevItems) => prevItems.filter((_, i) => i !== index)); // Remove from upcoming bills
+    setOpenModalIndex(null); // Close the modal
+  };
 
-    // Add the card to scheduled items
-    const scheduledCard = items[index];
-    setScheduledItems([...scheduledItems, scheduledCard]);
+  const handleCancel = (index) => {
+    setCancelModalIndex(index); // Open the cancel confirmation popup
+  };
 
-    // Reset the modal and expanded card
-    setOpenModalIndex(null);
-    setExpandedCardIndex(null);
+  const handleConfirmCancel = (index) => {
+    setCancelledIndexes((prev) => [...prev, index]); // Mark as cancelled
+    setCancelModalIndex(null); // Close the popup
   };
 
   const renderContent = () => {
@@ -79,9 +82,8 @@ export default function Protected() {
                 {items.map((card, index) => (
                   <View
                     key={card.id}
-                    className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''} ${expandedCardIndex === index ? 'expanded-card' : ''}`}
-                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: expandedCardIndex === index ? '80%' : '250px', backgroundColor: '#f9f9f9', position: 'relative' }}
-                    ref={expandedCardIndex === index ? expandedCardRef : null} // Assign ref only to the expanded card
+                    className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''}`}
+                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: '250px', backgroundColor: '#f9f9f9', position: 'relative' }}
                   >
                     <Heading level={4} style={{ textAlign: 'center' }}>
                       {card.bankTitle}
@@ -89,47 +91,24 @@ export default function Protected() {
                     <p>Bill Amount: ${card.billAmount}</p>
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
+                    
+                    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                      <Button
+                        className="pay-button"
+                        onClick={() => setOpenModalIndex(openModalIndex === index ? null : index)} // Toggle modal
+                        style={{ backgroundColor: '#DAA520', color: 'black' }}
+                      >
+                        Pay
+                      </Button>
 
-                    {/* Display Pay button only if the card is not already paid */}
-                    {!paidCards.includes(index) && (
-                      <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                        <Button
-                          className="pay-button"
-                          onClick={() => setOpenModalIndex(openModalIndex === index ? null : index)} // Toggle modal
-                          style={{ backgroundColor: '#DAA520', color: 'black' }}
-                        >
-                          Pay
-                        </Button>
-
-                        {/* Show the modal only for the clicked Pay button */}
-                        {openModalIndex === index && (
-                          <div className="modal">
-                            <Button className="small-button" onClick={() => setExpandedCardIndex(index)}>PayNow</Button>
-                            <Button className="small-button">AutoPay</Button>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Expanded card options */}
-                    {expandedCardIndex === index && (
-                      <div className="expanded-payment-options">
-                        <select>
-                          <option>Select Payment Method</option>
-                          <option>Checking Account</option>
-                          <option>Savings Account</option>
-                        </select>
-                        <label>
-                          <input type="radio" name={`payment-speed-${index}`} /> Standard (3-4 days)
-                        </label>
-                        <label>
-                          <input type="radio" name={`payment-speed-${index}`} /> Expedited (1-2 days)
-                        </label>
-                        <Button className="pay-it-button" onClick={() => handlePayIt(index)}>
-                          Pay It
-                        </Button>
-                      </div>
-                    )}
+                      {/* Show the modal only for the clicked Pay button */}
+                      {openModalIndex === index && (
+                        <div className="modal" ref={modalRef}>
+                          <Button className="small-button" onClick={() => handlePayIt(index)}>PayNow</Button>
+                          <Button className="small-button">AutoPay</Button>
+                        </div>
+                      )}
+                    </div>
                   </View>
                 ))}
               </Flex>
@@ -144,11 +123,11 @@ export default function Protected() {
             <Heading>Scheduled Bills</Heading>
             {scheduledItems && scheduledItems.length ? (
               <Flex direction="row" wrap="wrap" justifyContent="center">
-                {scheduledItems.map((card) => (
+                {scheduledItems.map((card, index) => (
                   <View
                     key={card.id}
                     className="bill-card"
-                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: '250px', backgroundColor: '#f9f9f9' }}
+                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: '250px', backgroundColor: '#f9f9f9', position: 'relative' }}
                   >
                     <Heading level={4} style={{ textAlign: 'center' }}>
                       {card.bankTitle}
@@ -156,6 +135,27 @@ export default function Protected() {
                     <p>Bill Amount: ${card.billAmount}</p>
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
+                    
+                    {!cancelledIndexes.includes(index) ? (
+                      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                        <Button
+                          className="cancel-button"
+                          onClick={() => handleCancel(index)}
+                          style={{ backgroundColor: 'red', color: 'white' }}
+                        >
+                          Cancel
+                        </Button>
+
+                        {cancelModalIndex === index && (
+                          <div className="modal" ref={modalRef}>
+                            <Button className="small-button" onClick={() => handleConfirmCancel(index)}>Confirm</Button>
+                            <Button className="small-button" onClick={() => setCancelModalIndex(null)}>Nevermind</Button>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p style={{ textAlign: 'center', color: 'green' }}>Cancelled</p>
+                    )}
                   </View>
                 ))}
               </Flex>
