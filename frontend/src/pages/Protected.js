@@ -10,12 +10,16 @@ const logger = new ConsoleLogger("Protected");
 
 export default function Protected() {
   const [items, setItems] = useState([]);
+  const [scheduledBills, setScheduledBills] = useState([]); // Track Scheduled Bills
   const [activeTab, setActiveTab] = useState('accounts');
   const [openModalIndex, setOpenModalIndex] = useState(null); // Track clicked Pay button
   const [expandedCardIndex, setExpandedCardIndex] = useState(null); // Track expanded card
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(''); // Track selected payment method
+  const [selectedPaymentSpeed, setSelectedPaymentSpeed] = useState(''); // Track selected radio button
   const client = generateClient();
   const today = new Date();
   const modalRef = useRef(null); // Reference to the modal
+  const cardRef = useRef(null); // Reference to the expanded card
 
   const getItems = async () => {
     try {
@@ -33,11 +37,15 @@ export default function Protected() {
     getItems();
   }, []);
 
-  // Close the modal if clicked outside
+  // Close the modal and expanded card if clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
+      if (
+        (modalRef.current && !modalRef.current.contains(event.target)) &&
+        (cardRef.current && !cardRef.current.contains(event.target))
+      ) {
         setOpenModalIndex(null);
+        setExpandedCardIndex(null);
       }
     };
     
@@ -52,9 +60,17 @@ export default function Protected() {
     return dueDateObj < today;
   };
 
-  const handlePayNowClick = (index) => {
-    setExpandedCardIndex(index); // Expand the clicked card
-    setOpenModalIndex(null); // Close the modal
+  // Handle "Pay It" button click
+  const handlePayIt = (index) => {
+    // Move the card to scheduled bills
+    const scheduledCard = items[index];
+    setScheduledBills([...scheduledBills, scheduledCard]);
+
+    // Reset everything back to normal
+    setExpandedCardIndex(null);
+    setOpenModalIndex(null);
+    setSelectedPaymentMethod('');
+    setSelectedPaymentSpeed('');
   };
 
   const renderContent = () => {
@@ -79,6 +95,7 @@ export default function Protected() {
                       width: expandedCardIndex === index ? '80%' : '250px', // Expanded width for the clicked card
                       height: expandedCardIndex === index ? 'auto' : 'auto' // Expand height if needed
                     }}
+                    ref={expandedCardIndex === index ? cardRef : null} // Attach ref to the expanded card
                   >
                     <Heading level={4} style={{ textAlign: 'center' }}>
                       {card.bankTitle}
@@ -100,7 +117,7 @@ export default function Protected() {
                       {/* Show the modal only for the clicked Pay button */}
                       {openModalIndex === index && !expandedCardIndex && (
                         <div className="modal" ref={modalRef}>
-                          <Button className="small-button" onClick={() => handlePayNowClick(index)}>PayNow</Button>
+                          <Button className="small-button" onClick={() => setExpandedCardIndex(index)}>PayNow</Button>
                           <Button className="small-button">AutoPay</Button>
                         </div>
                       )}
@@ -111,23 +128,40 @@ export default function Protected() {
                       <div className="expanded-payment-options">
                         <label>
                           Select Payment Method:
-                          <select>
-                            <option>Checking</option>
-                            <option>Savings</option>
+                          <select value={selectedPaymentMethod} onChange={(e) => setSelectedPaymentMethod(e.target.value)}>
+                            <option value="">Select...</option>
+                            <option value="checking">Checking</option>
+                            <option value="savings">Savings</option>
                           </select>
                         </label>
 
-                        <div>
+                        <div style={{ marginTop: '10px' }}>
                           <label>
-                            <input type="radio" name="payment-speed" value="standard" /> Standard (3-4 days)
+                            <input
+                              type="radio"
+                              name="payment-speed"
+                              value="standard"
+                              onChange={() => setSelectedPaymentSpeed('standard')}
+                            /> Standard (3-4 days)
                           </label>
                           <label style={{ marginLeft: '10px' }}>
-                            <input type="radio" name="payment-speed" value="expedited" /> Expedited (7-10 days)
+                            <input
+                              type="radio"
+                              name="payment-speed"
+                              value="expedited"
+                              onChange={() => setSelectedPaymentSpeed('expedited')}
+                            /> Expedited (7-10 days)
                           </label>
                         </div>
 
                         <div style={{ textAlign: 'center', marginTop: '10px' }}>
-                          <Button className="pay-it-button">Pay It</Button>
+                          <Button
+                            className="pay-it-button"
+                            disabled={!selectedPaymentMethod || !selectedPaymentSpeed}
+                            onClick={() => handlePayIt(index)}
+                          >
+                            Pay It
+                          </Button>
                         </div>
                       </div>
                     )}
@@ -143,7 +177,33 @@ export default function Protected() {
         return (
           <View>
             <Heading>Scheduled Bills</Heading>
-            <p>Your scheduled bills will be displayed here.</p>
+            {scheduledBills && scheduledBills.length ? (
+              <Flex direction="row" wrap="wrap" justifyContent="center">
+                {scheduledBills.map((card, index) => (
+                  <View
+                    key={card.id}
+                    className="bill-card"
+                    style={{
+                      padding: '20px',
+                      border: '1px solid #ccc',
+                      margin: '10px',
+                      borderRadius: '10px',
+                      backgroundColor: '#f9f9f9',
+                      position: 'relative',
+                      width: '250px'
+                    }}
+                  >
+                    <Heading level={4} style={{ textAlign: 'center' }}>
+                      {card.bankTitle}
+                    </Heading>
+                    <p>Bill Amount: ${card.billAmount}</p>
+                    <p>Scheduled Date: {new Date().toLocaleDateString()}</p> {/* Assuming current date for simplicity */}
+                  </View>
+                ))}
+              </Flex>
+            ) : (
+              <div>No scheduled bills</div>
+            )}
           </View>
         );
       case 'history':
