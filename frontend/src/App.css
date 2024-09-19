@@ -150,11 +150,11 @@ nav {
   background-color: #DAA520;
   color: black;
   border: none;
-  padding: 2px 5px;
+  padding: 4px 10px;
   cursor: pointer;
-  font-size: 0.5rem;
+  font-size: 0.65rem;
   text-align: center;
-  min-width: 10px;
+  min-width: 50px;
 }
 
 .small-button:hover {
@@ -164,22 +164,21 @@ nav {
 /* Payment method and radio buttons styling */
 .payment-options {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
   margin-top: 10px;
 }
 
 .payment-options select {
-  padding: 8px;
+  padding: 5px;
   font-size: 0.85rem;
-  margin-bottom: 10px;
-  width: 150px;
-  /* Adjusted dropdown size */
 }
 
 .payment-options label {
-  display: inline-block;
+  display: flex;
+  align-items: center;
   font-size: 0.85rem;
+  margin-right: 10px;
 }
 
 .payment-options input[type="radio"] {
@@ -190,8 +189,8 @@ nav {
 .pay-it-button {
   background-color: #DAA520;
   color: black;
-  padding: 8px 16px;
-  font-size: 0.75rem;
+  padding: 10px 20px;
+  font-size: 16px;
   border: none;
   cursor: pointer;
 }

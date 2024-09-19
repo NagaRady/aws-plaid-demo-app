@@ -71,7 +71,7 @@ export default function Protected() {
     setScheduledItems((prev) => [...prev, itemToSchedule]);
     setItems((prevItems) => {
       const updatedItems = [...prevItems];
-      updatedItems[index] = { ...updatedItems[index], paid: true }; // Mark the card as paid
+      updatedItems[index].hasPaid = true;
       return updatedItems;
     });
     setExpandedCardIndex(null); // Collapse the card
@@ -103,7 +103,7 @@ export default function Protected() {
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
 
-                    {!card.paid && expandedCardIndex !== index && (
+                    {!card.hasPaid && expandedCardIndex !== index && (
                       <div style={{ textAlign: 'center', marginTop: '20px' }}>
                         <Button
                           className="pay-button"
@@ -123,7 +123,7 @@ export default function Protected() {
                     )}
 
                     {expandedCardIndex === index && (
-                      <div className="payment-options" style={{ marginTop: '10px' }}>
+                      <Flex className="payment-options" style={{ marginTop: '10px', alignItems: 'center', gap: '10px' }}>
                         <label>
                           Select Payment Method:
                           <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
@@ -156,10 +156,11 @@ export default function Protected() {
                           className="pay-it-button"
                           onClick={() => handlePayIt(index)}
                           disabled={!paymentMethod || !paymentSpeed}
+                          style={{ padding: '10px 20px', fontSize: '16px' }}
                         >
                           PayIt
                         </Button>
-                      </div>
+                      </Flex>
                     )}
                   </View>
                 ))}
@@ -250,7 +251,7 @@ export default function Protected() {
   return (
     <Flex direction="column" style={{ padding: '20px', textAlign: 'center' }}>
       <Heading>Your Dashboard</Heading>
-
+      
       <div className="tabs">
         <Button
           className={activeTab === 'accounts' ? 'active' : ''}
