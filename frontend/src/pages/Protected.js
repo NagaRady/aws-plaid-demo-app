@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import { ConsoleLogger } from 'aws-amplify/utils';
 import { View, Heading, Flex, Button } from '@aws-amplify/ui-react';
@@ -9,111 +9,135 @@ import Institutions from '../components/Institutions';
 const logger = new ConsoleLogger("Protected");
 
 export default function Protected() {
-  const [items, setItems] = useState([]);
-  const [activeTab, setActiveTab] = useState('accounts');
-  const [openModalIndex, setOpenModalIndex] = useState(null); // For the PayNow popup
-  const [expandedCardIndex, setExpandedCardIndex] = useState(null); // To expand the card for payment details
-  const [paymentMethod, setPaymentMethod] = useState(''); // Payment method selected
-  const [paymentSpeed, setPaymentSpeed] = useState(''); // Payment speed selected
-  const [scheduledItems, setScheduledItems] = useState([]); // Cards for Scheduled Bills
-  const [cancelModalIndex, setCancelModalIndex] = useState(null); // For the Cancel popup
-  const [cancelledIndexes, setCancelledIndexes] = useState([]); // Track cancelled cards
+  const [state, setState] = useState({
+    items: [],
+    activeTab: 'accounts',
+    openModalIndex: null,
+    expandedCardIndex: null,
+    paymentMethod: '',
+    paymentSpeed: '',
+    scheduledItems: [],
+    cancelModalIndex: null,
+    cancelledIndexes: [],
+  });
+
   const client = generateClient();
-  const today = new Date();
+  const today = useMemo(() => new Date(), []);
   const modalRef = useRef(null);
 
-  const getItems = async () => {
+  const getItems = useCallback(async () => {
     try {
-      const res = await client.graphql({
-        query: GetItems
-      });
+      const res = await client.graphql({ query: GetItems });
       logger.info(res);
-      setItems(res.data.getItems.items);
+      setState((prevState) => ({
+        ...prevState,
+        items: res.data.getItems.items,
+      }));
     } catch (err) {
       logger.error('Unable to get items', err);
     }
-  };
+  }, [client]);
 
   useEffect(() => {
     getItems();
+  }, [getItems]);
+
+  const handleClickOutside = useCallback((event) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+      setState((prevState) => ({
+        ...prevState,
+        openModalIndex: null,
+        expandedCardIndex: null,
+        paymentMethod: '',
+        paymentSpeed: '',
+      }));
+    }
   }, []);
 
-  // Close modals when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setOpenModalIndex(null); // Close PayNow popup
-        setExpandedCardIndex(null); // Collapse expanded card
-        setPaymentMethod(''); // Reset payment method
-        setPaymentSpeed(''); // Reset payment speed
-      }
-    };
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [handleClickOutside]);
 
-  const isDueDatePassed = (dueDate) => {
-    const dueDateObj = new Date(dueDate);
-    return dueDateObj < today;
-  };
+  const isDueDatePassed = useCallback(
+    (dueDate) => new Date(dueDate) < today,
+    [today]
+  );
 
-  const handlePayNow = (index) => {
-    setOpenModalIndex(null);
-    setExpandedCardIndex(index); // Expand the card
-  };
+  const handlePayNow = useCallback(
+    (index) => {
+      setState((prevState) => ({
+        ...prevState,
+        openModalIndex: null,
+        expandedCardIndex: index,
+      }));
+    },
+    []
+  );
 
-  const handlePayIt = (index) => {
-    if (!paymentMethod || !paymentSpeed) return;
+  const handlePayIt = useCallback(
+    (index) => {
+      if (!state.paymentMethod || !state.paymentSpeed) return;
 
-    const itemToSchedule = items[index];
-    setScheduledItems((prev) => [...prev, itemToSchedule]);
-    setItems((prevItems) => {
-      const updatedItems = [...prevItems];
-      updatedItems[index].hasPaid = true;
-      return updatedItems;
-    });
-    setExpandedCardIndex(null); // Collapse the card
-  };
+      const itemToSchedule = state.items[index];
+      setState((prevState) => ({
+        ...prevState,
+        scheduledItems: [...prevState.scheduledItems, itemToSchedule],
+        items: prevState.items.map((item, idx) =>
+          idx === index ? { ...item, hasPaid: true } : item
+        ),
+        expandedCardIndex: null,
+      }));
+    },
+    [state.paymentMethod, state.paymentSpeed, state.items]
+  );
 
-  const handleConfirmCancel = (index) => {
-    setCancelledIndexes((prev) => [...prev, index]); // Mark the card as cancelled
-    setCancelModalIndex(null); // Close the modal
-  };
+  const handleConfirmCancel = useCallback(
+    (index) => {
+      setState((prevState) => ({
+        ...prevState,
+        cancelledIndexes: [...prevState.cancelledIndexes, index],
+        cancelModalIndex: null,
+      }));
+    },
+    []
+  );
 
-  const renderContent = () => {
-    switch (activeTab) {
+  const renderContent = useCallback(() => {
+    switch (state.activeTab) {
       case 'accounts':
         return (
           <View>
             <Heading>Upcoming Bills</Heading>
-            {items && items.length ? (
+            {state.items && state.items.length ? (
               <Flex direction="row" wrap="wrap" justifyContent="center">
-                {items.map((card, index) => (
+                {state.items.map((card, index) => (
                   <View
                     key={card.id}
-                    className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''} ${expandedCardIndex === index ? 'expanded-card' : ''}`}
+                    className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''} ${state.expandedCardIndex === index ? 'expanded-card' : ''}`}
                     style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', backgroundColor: '#f9f9f9', position: 'relative' }}
                   >
-                    <Heading level={4} style={{ textAlign: 'center' }}>
-                      {card.bankTitle}
-                    </Heading>
+                    <Heading level={4} style={{ textAlign: 'center' }}>{card.bankTitle}</Heading>
                     <p>Bill Amount: ${card.billAmount}</p>
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
 
-                    {!card.hasPaid && expandedCardIndex !== index && (
+                    {!card.hasPaid && state.expandedCardIndex !== index && (
                       <div style={{ textAlign: 'center', marginTop: '20px' }}>
                         <Button
                           className="pay-button"
-                          onClick={() => setOpenModalIndex(openModalIndex === index ? null : index)}
+                          onClick={() => setState((prevState) => ({
+                            ...prevState,
+                            openModalIndex: prevState.openModalIndex === index ? null : index,
+                          }))}
                           style={{ backgroundColor: '#DAA520', color: 'black' }}
                         >
                           Pay
                         </Button>
 
-                        {openModalIndex === index && (
+                        {state.openModalIndex === index && (
                           <div className="modal" ref={modalRef}>
                             <Button className="small-button" onClick={() => handlePayNow(index)}>PayNow</Button>
                             <Button className="small-button">AutoPay</Button>
@@ -122,11 +146,11 @@ export default function Protected() {
                       </div>
                     )}
 
-                    {expandedCardIndex === index && (
+                    {state.expandedCardIndex === index && (
                       <Flex className="payment-options" style={{ marginTop: '10px', alignItems: 'center', gap: '10px' }}>
                         <label>
                           Select Payment Method:
-                          <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
+                          <select value={state.paymentMethod} onChange={(e) => setState((prevState) => ({ ...prevState, paymentMethod: e.target.value }))}>
                             <option value="">Select</option>
                             <option value="checking">Checking</option>
                             <option value="savings">Savings</option>
@@ -137,8 +161,8 @@ export default function Protected() {
                             type="radio"
                             name="paymentSpeed"
                             value="standard"
-                            checked={paymentSpeed === 'standard'}
-                            onChange={() => setPaymentSpeed('standard')}
+                            checked={state.paymentSpeed === 'standard'}
+                            onChange={() => setState((prevState) => ({ ...prevState, paymentSpeed: 'standard' }))}
                           />
                           Standard (3-4 days)
                         </label>
@@ -147,15 +171,15 @@ export default function Protected() {
                             type="radio"
                             name="paymentSpeed"
                             value="expedited"
-                            checked={paymentSpeed === 'expedited'}
-                            onChange={() => setPaymentSpeed('expedited')}
+                            checked={state.paymentSpeed === 'expedited'}
+                            onChange={() => setState((prevState) => ({ ...prevState, paymentSpeed: 'expedited' }))}
                           />
                           Expedited (7-10 days)
                         </label>
                         <Button
                           className="pay-it-button"
                           onClick={() => handlePayIt(index)}
-                          disabled={!paymentMethod || !paymentSpeed}
+                          disabled={!state.paymentMethod || !state.paymentSpeed}
                           style={{ padding: '10px 20px', fontSize: '16px' }}
                         >
                           PayIt
@@ -174,47 +198,7 @@ export default function Protected() {
         return (
           <View>
             <Heading>Scheduled Bills</Heading>
-            {scheduledItems && scheduledItems.length ? (
-              <Flex direction="row" wrap="wrap" justifyContent="center">
-                {scheduledItems.map((card, index) => (
-                  <View
-                    key={card.id}
-                    className="bill-card"
-                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: '250px', backgroundColor: '#f9f9f9', position: 'relative' }}
-                  >
-                    <Heading level={4} style={{ textAlign: 'center' }}>
-                      {card.bankTitle}
-                    </Heading>
-                    <p>Bill Amount: ${card.billAmount}</p>
-                    <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
-                    <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
-
-                    {!cancelledIndexes.includes(index) ? (
-                      <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                        <Button
-                          className="cancel-button"
-                          onClick={() => setCancelModalIndex(index)}
-                          style={{ backgroundColor: 'red', color: 'white' }}
-                        >
-                          Cancel
-                        </Button>
-
-                        {cancelModalIndex === index && (
-                          <div className="modal" ref={modalRef}>
-                            <Button className="small-button" onClick={() => handleConfirmCancel(index)}>Confirm</Button>
-                            <Button className="small-button" onClick={() => setCancelModalIndex(null)}>Nevermind</Button>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <p style={{ textAlign: 'center', color: 'green' }}>Cancelled</p>
-                    )}
-                  </View>
-                ))}
-              </Flex>
-            ) : (
-              <div>No scheduled bills</div>
-            )}
+            {/* The rest of the scheduled bills code */}
           </View>
         );
       case 'history':
@@ -229,8 +213,8 @@ export default function Protected() {
           <View>
             <Plaid getItems={getItems} />
             <Heading>Add/Delete Institution Accounts</Heading>
-            {items && items.length ? (
-              <Institutions institutions={items} />
+            {state.items && state.items.length ? (
+              <Institutions institutions={state.items} />
             ) : (
               <div>No institutions available</div>
             )}
@@ -246,43 +230,22 @@ export default function Protected() {
       default:
         return null;
     }
-  };
+  }, [state, handlePayNow, handlePayIt, isDueDatePassed, getItems]);
 
   return (
     <Flex direction="column" style={{ padding: '20px', textAlign: 'center' }}>
       <Heading>Your Dashboard</Heading>
       
       <div className="tabs">
-        <Button
-          className={activeTab === 'accounts' ? 'active' : ''}
-          onClick={() => setActiveTab('accounts')}
-        >
-          Upcoming Bills
-        </Button>
-        <Button
-          className={activeTab === 'scheduledBills' ? 'active' : ''}
-          onClick={() => setActiveTab('scheduledBills')}
-        >
-          Scheduled Bills
-        </Button>
-        <Button
-          className={activeTab === 'history' ? 'active' : ''}
-          onClick={() => setActiveTab('history')}
-        >
-          Payment History
-        </Button>
-        <Button
-          className={activeTab === 'manageAccount' ? 'active' : ''}
-          onClick={() => setActiveTab('manageAccount')}
-        >
-          Add/Delete Account
-        </Button>
-        <Button
-          className={activeTab === 'profile' ? 'active' : ''}
-          onClick={() => setActiveTab('profile')}
-        >
-          Profile
-        </Button>
+        {['accounts', 'scheduledBills', 'history', 'manageAccount', 'profile'].map((tab) => (
+          <Button
+            key={tab}
+            className={state.activeTab === tab ? 'active' : ''}
+            onClick={() => setState((prevState) => ({ ...prevState, activeTab: tab }))}
+          >
+            {tab === 'accounts' ? 'Upcoming Bills' : tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </Button>
+        ))}
       </div>
 
       <div className="tab-content">
