@@ -78,6 +78,7 @@ nav {
   color: black;
   border: none;
   padding: 8px 16px;
+  /* Decreased padding for smaller button size */
   cursor: pointer;
   text-align: center;
   margin-top: 10px;
@@ -160,32 +161,30 @@ nav {
   background-color: lightblue;
 }
 
-/* Expanded payment options section */
-.expanded-payment-options {
-  margin-top: 20px;
-  text-align: center;
+/* Payment method and radio buttons styling */
+.payment-options {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-top: 10px;
 }
 
-.expanded-payment-options select {
+.payment-options select {
   padding: 5px;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   margin-bottom: 10px;
 }
 
-.expanded-payment-options label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
+.payment-options label {
+  display: inline-block;
+  font-size: 0.85rem;
 }
 
-.expanded-payment-options input[type="radio"] {
-  margin-right: 10px;
+.payment-options input[type="radio"] {
+  margin-right: 5px;
 }
 
+/* PayIt button styling */
 .pay-it-button {
   background-color: #DAA520;
   color: black;
