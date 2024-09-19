@@ -170,9 +170,11 @@ nav {
 }
 
 .payment-options select {
-  padding: 5px;
+  padding: 8px;
   font-size: 0.85rem;
   margin-bottom: 10px;
+  width: 150px;
+  /* Adjusted dropdown size */
 }
 
 .payment-options label {
@@ -188,7 +190,7 @@ nav {
 .pay-it-button {
   background-color: #DAA520;
   color: black;
-  padding: 6px 12px;
+  padding: 8px 16px;
   font-size: 0.75rem;
   border: none;
   cursor: pointer;

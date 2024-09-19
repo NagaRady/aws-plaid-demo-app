@@ -18,11 +18,9 @@ export default function Protected() {
   const [scheduledItems, setScheduledItems] = useState([]); // Cards for Scheduled Bills
   const [cancelModalIndex, setCancelModalIndex] = useState(null); // For the Cancel popup
   const [cancelledIndexes, setCancelledIndexes] = useState([]); // Track cancelled cards
-  const [paidIndexes, setPaidIndexes] = useState([]); // Track paid cards in the Upcoming Bills tab
   const client = generateClient();
   const today = new Date();
-  const modalRef = useRef(null); // Reference for modals
-  const cardRef = useRef(null);  // Reference for the expanded card
+  const modalRef = useRef(null);
 
   const getItems = async () => {
     try {
@@ -40,16 +38,10 @@ export default function Protected() {
     getItems();
   }, []);
 
-  // Close modals and reset everything when clicking outside the card/modal
+  // Close modals when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        cardRef.current && 
-        !cardRef.current.contains(event.target) &&
-        modalRef.current &&
-        !modalRef.current.contains(event.target)
-      ) {
-        // Reset everything if clicked outside
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
         setOpenModalIndex(null); // Close PayNow popup
         setExpandedCardIndex(null); // Collapse expanded card
         setPaymentMethod(''); // Reset payment method
@@ -77,11 +69,14 @@ export default function Protected() {
 
     const itemToSchedule = items[index];
     setScheduledItems((prev) => [...prev, itemToSchedule]);
-    setPaidIndexes((prev) => [...prev, index]); // Mark the card as paid
+    setItems((prevItems) => {
+      const updatedItems = [...prevItems];
+      updatedItems[index] = { ...updatedItems[index], paid: true }; // Mark the card as paid
+      return updatedItems;
+    });
     setExpandedCardIndex(null); // Collapse the card
   };
 
-  // Define handleConfirmCancel function
   const handleConfirmCancel = (index) => {
     setCancelledIndexes((prev) => [...prev, index]); // Mark the card as cancelled
     setCancelModalIndex(null); // Close the modal
@@ -99,7 +94,6 @@ export default function Protected() {
                   <View
                     key={card.id}
                     className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''} ${expandedCardIndex === index ? 'expanded-card' : ''}`}
-                    ref={expandedCardIndex === index ? cardRef : null}
                     style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', backgroundColor: '#f9f9f9', position: 'relative' }}
                   >
                     <Heading level={4} style={{ textAlign: 'center' }}>
@@ -108,8 +102,8 @@ export default function Protected() {
                     <p>Bill Amount: ${card.billAmount}</p>
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
-                    
-                    {expandedCardIndex !== index && !paidIndexes.includes(index) && (
+
+                    {!card.paid && expandedCardIndex !== index && (
                       <div style={{ textAlign: 'center', marginTop: '20px' }}>
                         <Button
                           className="pay-button"
@@ -193,7 +187,7 @@ export default function Protected() {
                     <p>Bill Amount: ${card.billAmount}</p>
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
-                    
+
                     {!cancelledIndexes.includes(index) ? (
                       <div style={{ textAlign: 'center', marginTop: '20px' }}>
                         <Button
@@ -256,7 +250,7 @@ export default function Protected() {
   return (
     <Flex direction="column" style={{ padding: '20px', textAlign: 'center' }}>
       <Heading>Your Dashboard</Heading>
-      
+
       <div className="tabs">
         <Button
           className={activeTab === 'accounts' ? 'active' : ''}
