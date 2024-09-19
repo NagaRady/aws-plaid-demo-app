@@ -11,15 +11,17 @@ const logger = new ConsoleLogger("Protected");
 export default function Protected() {
   const [items, setItems] = useState([]);
   const [activeTab, setActiveTab] = useState('accounts');
-  const [openModalIndex, setOpenModalIndex] = useState(null); // For pay modal in "Upcoming Bills"
-  const [scheduledItems, setScheduledItems] = useState([]); // For cards in "Scheduled Bills"
-  const [cancelModalIndex, setCancelModalIndex] = useState(null); // For cancel popup in "Scheduled Bills"
+  const [openModalIndex, setOpenModalIndex] = useState(null); // For the PayNow popup
+  const [expandedCardIndex, setExpandedCardIndex] = useState(null); // To expand the card for payment details
+  const [paymentMethod, setPaymentMethod] = useState(''); // Payment method selected
+  const [paymentSpeed, setPaymentSpeed] = useState(''); // Payment speed selected
+  const [scheduledItems, setScheduledItems] = useState([]); // Cards for Scheduled Bills
+  const [cancelModalIndex, setCancelModalIndex] = useState(null); // For the Cancel popup
   const [cancelledIndexes, setCancelledIndexes] = useState([]); // Track cancelled cards
   const client = generateClient();
   const today = new Date();
   const modalRef = useRef(null);
 
-  // Fetch the items
   const getItems = async () => {
     try {
       const res = await client.graphql({
@@ -28,7 +30,7 @@ export default function Protected() {
       logger.info(res);
       setItems(res.data.getItems.items);
     } catch (err) {
-      logger.error('unable to get items', err);
+      logger.error('Unable to get items', err);
     }
   };
 
@@ -36,11 +38,14 @@ export default function Protected() {
     getItems();
   }, []);
 
+  // Close modals when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setOpenModalIndex(null); // Close pay modal
-        setCancelModalIndex(null); // Close cancel modal
+        setOpenModalIndex(null); // Close PayNow popup
+        setExpandedCardIndex(null); // Collapse expanded card
+        setPaymentMethod(''); // Reset payment method
+        setPaymentSpeed(''); // Reset payment speed
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -54,26 +59,20 @@ export default function Protected() {
     return dueDateObj < today;
   };
 
-  // Handle PayIt functionality
+  const handlePayNow = (index) => {
+    setOpenModalIndex(null);
+    setExpandedCardIndex(index); // Expand the card
+  };
+
   const handlePayIt = (index) => {
+    if (!paymentMethod || !paymentSpeed) return;
+
     const itemToSchedule = items[index];
     setScheduledItems((prev) => [...prev, itemToSchedule]);
-    setItems((prevItems) => prevItems.filter((_, i) => i !== index)); // Remove paid card from "Upcoming Bills"
-    setOpenModalIndex(null); // Close the pay modal
+    setItems((prevItems) => prevItems.filter((_, i) => i !== index)); // Remove from Upcoming Bills
+    setExpandedCardIndex(null); // Collapse the card
   };
 
-  // Handle cancel button click
-  const handleCancel = (index) => {
-    setCancelModalIndex(index); // Open the cancel confirmation popup
-  };
-
-  // Handle confirm cancellation
-  const handleConfirmCancel = (index) => {
-    setCancelledIndexes((prev) => [...prev, index]); // Mark card as cancelled
-    setCancelModalIndex(null); // Close the cancel modal
-  };
-
-  // Render content based on the active tab
   const renderContent = () => {
     switch (activeTab) {
       case 'accounts':
@@ -85,8 +84,8 @@ export default function Protected() {
                 {items.map((card, index) => (
                   <View
                     key={card.id}
-                    className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''}`}
-                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', width: '250px', backgroundColor: '#f9f9f9', position: 'relative' }}
+                    className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''} ${expandedCardIndex === index ? 'expanded-card' : ''}`}
+                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', backgroundColor: '#f9f9f9', position: 'relative' }}
                   >
                     <Heading level={4} style={{ textAlign: 'center' }}>
                       {card.bankTitle}
@@ -95,22 +94,64 @@ export default function Protected() {
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
                     
-                    <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                      <Button
-                        className="pay-button"
-                        onClick={() => setOpenModalIndex(openModalIndex === index ? null : index)}
-                        style={{ backgroundColor: '#DAA520', color: 'black' }}
-                      >
-                        Pay
-                      </Button>
+                    {expandedCardIndex !== index && (
+                      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                        <Button
+                          className="pay-button"
+                          onClick={() => setOpenModalIndex(openModalIndex === index ? null : index)}
+                          style={{ backgroundColor: '#DAA520', color: 'black' }}
+                        >
+                          Pay
+                        </Button>
 
-                      {openModalIndex === index && (
-                        <div className="modal" ref={modalRef}>
-                          <Button className="small-button" onClick={() => handlePayIt(index)}>PayNow</Button>
-                          <Button className="small-button">AutoPay</Button>
-                        </div>
-                      )}
-                    </div>
+                        {openModalIndex === index && (
+                          <div className="modal" ref={modalRef}>
+                            <Button className="small-button" onClick={() => handlePayNow(index)}>PayNow</Button>
+                            <Button className="small-button">AutoPay</Button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {expandedCardIndex === index && (
+                      <div className="payment-options" style={{ marginTop: '10px' }}>
+                        <label>
+                          Select Payment Method:
+                          <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
+                            <option value="">Select</option>
+                            <option value="checking">Checking</option>
+                            <option value="savings">Savings</option>
+                          </select>
+                        </label>
+                        <label>
+                          <input
+                            type="radio"
+                            name="paymentSpeed"
+                            value="standard"
+                            checked={paymentSpeed === 'standard'}
+                            onChange={() => setPaymentSpeed('standard')}
+                          />
+                          Standard (3-4 days)
+                        </label>
+                        <label>
+                          <input
+                            type="radio"
+                            name="paymentSpeed"
+                            value="expedited"
+                            checked={paymentSpeed === 'expedited'}
+                            onChange={() => setPaymentSpeed('expedited')}
+                          />
+                          Expedited (7-10 days)
+                        </label>
+                        <Button
+                          className="pay-it-button"
+                          onClick={() => handlePayIt(index)}
+                          disabled={!paymentMethod || !paymentSpeed}
+                        >
+                          PayIt
+                        </Button>
+                      </div>
+                    )}
                   </View>
                 ))}
               </Flex>
@@ -142,7 +183,7 @@ export default function Protected() {
                       <div style={{ textAlign: 'center', marginTop: '20px' }}>
                         <Button
                           className="cancel-button"
-                          onClick={() => handleCancel(index)}
+                          onClick={() => setCancelModalIndex(index)}
                           style={{ backgroundColor: 'red', color: 'white' }}
                         >
                           Cancel
