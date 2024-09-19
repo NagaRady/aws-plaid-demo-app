@@ -73,6 +73,12 @@ export default function Protected() {
     setExpandedCardIndex(null); // Collapse the card
   };
 
+  // Define handleConfirmCancel function
+  const handleConfirmCancel = (index) => {
+    setCancelledIndexes((prev) => [...prev, index]); // Mark the card as cancelled
+    setCancelModalIndex(null); // Close the modal
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'accounts':
