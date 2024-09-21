@@ -19,6 +19,7 @@ export default function Protected() {
     scheduledItems: [],
     cancelModalIndex: null,
     cancelledIndexes: [],
+    openCancelModalIndex: null,
   });
 
   const client = generateClient();
@@ -47,6 +48,7 @@ export default function Protected() {
       setState((prevState) => ({
         ...prevState,
         openModalIndex: null,
+        openCancelModalIndex: null,
         expandedCardIndex: null,
         paymentMethod: '',
         paymentSpeed: '',
@@ -99,7 +101,7 @@ export default function Protected() {
       setState((prevState) => ({
         ...prevState,
         cancelledIndexes: [...prevState.cancelledIndexes, index],
-        cancelModalIndex: null,
+        openCancelModalIndex: null,
       }));
     },
     []
@@ -179,7 +181,7 @@ export default function Protected() {
                         <Button
                           className="pay-it-button"
                           onClick={() => handlePayIt(index)}
-                          disabled={!state.paymentMethod || !state.paymentSpeed}
+                          disabled={!state.paymentMethod or !state.paymentSpeed}
                           style={{ padding: '10px 20px', fontSize: '16px' }}
                         >
                           PayIt
@@ -209,6 +211,31 @@ export default function Protected() {
                     <p>Bill Amount: ${card.billAmount}</p>
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
+                    {state.cancelledIndexes.includes(index) ? (
+                      <p>Scheduled</p>
+                    ) : (
+                      <Button
+                        onClick={() => setState(prevState => ({
+                          ...prevState,
+                          openCancelModalIndex: index
+                        }))}
+                        style={{ backgroundColor: 'red', color: 'white' }}>
+                        Cancel
+                      </Button>
+                    )}
+
+                    {state.openCancelModalIndex === index && (
+                      <div className="modal" ref={modalRef}>
+                        <p>Are you sure you want to cancel the schedule?</p>
+                        <Button onClick={() => handleConfirmCancel(index)}>Confirm</Button>
+                        <Button onClick={() => setState(prevState => ({
+                          ...prevState,
+                          openCancelModalIndex: null
+                        }))}>
+                          Nevermind
+                        </Button>
+                      </div>
+                    )}
                   </View>
                 ))}
               </Flex>
@@ -246,7 +273,7 @@ export default function Protected() {
       default:
         return null;
     }
-  }, [state, handlePayNow, handlePayIt, isDueDatePassed, getItems]);
+  }, [state, handlePayNow, handlePayIt, isDueDatePassed, getItems, handleConfirmCancel]);
 
   return (
     <Flex direction="column" style={{ padding: '20px', textAlign: 'center' }}>
