@@ -141,6 +141,7 @@ export default function Protected() {
                           <div className="modal" ref={modalRef}>
                             <Button className="small-button" onClick={() => handlePayNow(index)}>PayNow</Button>
                             <Button className="small-button">AutoPay</Button>
+                            <div/> {/* Ensure closing div here if needed */}
                           </div>
                         )}
                       </div>
@@ -207,7 +208,7 @@ export default function Protected() {
                 </View>
               ))
             ) : (
-              <div>No scheduled bills</p>
+              <div>No scheduled bills</div>
             )}
           </View>
         );
