@@ -164,7 +164,7 @@ export default function Protected() {
                             name="paymentSpeed"
                             value="standard"
                             checked={state.paymentSpeed === 'standard'}
-                            onChange={() => setState((prevState) => ({ ...prevState, paymentSpeed: 'standard' }))}
+                            onChange={(e) => setState((prevState) => ({ ...prevState, paymentSpeed: 'standard' }))}
                           />
                           Standard (3-4 days)
                         </label>
@@ -174,14 +174,14 @@ export default function Protected() {
                             name="paymentSpeed"
                             value="expedited"
                             checked={state.paymentSpeed === 'expedited'}
-                            onChange={() => setState((prevState) => ({ ...prevState, paymentSpeed: 'expedited' }))}
+                            onChange={(e) => setState((prevState) => ({ ...prevState, paymentSpeed: 'expedited' }))}
                           />
                           Expedited (7-10 days)
                         </label>
                         <Button
                           className="pay-it-button"
                           onClick={() => handlePayIt(index)}
-                          disabled={!state.paymentMethod or !state.paymentSpeed}
+                          disabled={!state.paymentMethod || !state.paymentSpeed}
                           style={{ padding: '10px 20px', fontSize: '16px' }}
                         >
                           PayIt
@@ -207,7 +207,7 @@ export default function Protected() {
                     className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''}`}
                     style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', backgroundColor: '#f9f9f9', position: 'relative' }}
                   >
-                    <Heading level={4} style={{ textAlign: 'center' }}>{card.bankTitle}</Heading>
+                    <Heading level={4} style={{ textAlign: 'center' }}>{card.bankTitle}</Heading
                     <p>Bill Amount: ${card.billAmount}</p>
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
