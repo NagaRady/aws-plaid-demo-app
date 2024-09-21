@@ -83,7 +83,12 @@ export default function Protected() {
     (index) => {
       if (!state.paymentMethod || !state.paymentSpeed) return;
 
-      const itemToSchedule = { ...state.items[index], hasPaid: true, showPayButton: false };
+      const itemToSchedule = { 
+        ...state.items[index], 
+        hasPaid: true, 
+        showPayButton: false, 
+        status: 'Scheduled' // Add default status when bill is scheduled
+      };
       setState((prevState) => ({
         ...prevState,
         scheduledItems: [...prevState.scheduledItems, itemToSchedule],
@@ -102,6 +107,9 @@ export default function Protected() {
         ...prevState,
         cancelledIndexes: [...prevState.cancelledIndexes, index],
         openCancelModalIndex: null,
+        scheduledItems: prevState.scheduledItems.map((item, idx) =>
+          idx === index ? { ...item, status: 'Cancelled' } : item // Update status to Cancelled
+        ),
       }));
     },
     []
@@ -203,7 +211,8 @@ export default function Protected() {
             {state.scheduledItems && state.scheduledItems.length ? (
               <Flex direction="row" wrap="wrap" justifyContent="center">
                 {state.scheduledItems.map((card, index) => (
-                  <View key={card.id}
+                  <View
+                    key={card.id}
                     className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''}`}
                     style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', backgroundColor: '#f9f9f9', position: 'relative' }}
                   >
@@ -211,6 +220,8 @@ export default function Protected() {
                     <p>Bill Amount: ${card.billAmount}</p>
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
+                    <p>Status: {card.status || 'Pending'}</p> {/* Display the status here */}
+
                     {state.cancelledIndexes.includes(index) ? (
                       <p>Cancelled</p>
                     ) : (
