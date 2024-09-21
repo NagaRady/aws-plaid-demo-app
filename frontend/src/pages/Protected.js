@@ -32,7 +32,7 @@ export default function Protected() {
       logger.info(res);
       setState((prevState) => ({
         ...prevState,
-        items: res.data.getItems.items,
+        items: res.data.getItems.items.map(item => ({ ...item, showPayButton: true })),
       }));
     } catch (err) {
       logger.error('Unable to get items', err);
@@ -83,7 +83,7 @@ export default function Protected() {
     (index) => {
       if (!state.paymentMethod || !state.paymentSpeed) return;
 
-      const itemToSchedule = { ...state.items[index], hasPaid: true };
+      const itemToSchedule = { ...state.items[index], hasPaid: true, showPayButton: false };
       setState((prevState) => ({
         ...prevState,
         scheduledItems: [...prevState.scheduledItems, itemToSchedule],
@@ -126,7 +126,7 @@ export default function Protected() {
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
 
-                    {!card.hasPaid && state.expandedCardIndex !== index && (
+                    {card.showPayButton && !card.hasPaid && state.expandedCardIndex !== index && (
                       <div style={{ textAlign: 'center', marginTop: '20px' }}>
                         <Button
                           className="pay-button"
@@ -138,13 +138,12 @@ export default function Protected() {
                         >
                           Pay
                         </Button>
+                    )}
 
-                        {state.openModalIndex === index && (
-                          <div className="modal" ref={modalRef}>
-                            <Button className="small-button" onClick={() => handlePayNow(index)}>PayNow</Button>
-                            <Button className="small-button">AutoPay</Button>
-                          </div>
-                        )}
+                    {state.openModalIndex === index && (
+                      <div className="modal" ref={modalRef}>
+                        <Button className="small-button" onClick={() => handlePayNow(index)}>PayNow</Button>
+                        <Button className="small-button">AutoPay</Button>
                       </div>
                     )}
 
@@ -208,7 +207,7 @@ export default function Protected() {
                     style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', backgroundColor: '#f9f9f9', position: 'relative' }}
                   >
                     <Heading level={4} style={{ textAlign: 'center' }}>{card.bankTitle}</Heading>
-                    <p>Bill Amount: ${card.billAmount}</p>
+                    <p>Bill Amount: ${card.billAmount}</p
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
                     {state.cancelledIndexes.includes(index) ? (
@@ -226,7 +225,6 @@ export default function Protected() {
 
                     {state.openCancelModalIndex === index && (
                       <div className="modal" ref={modalRef}>
-                        {/* <p>Are you sure you want to cancel the schedule?</p> */}
                         <Button className="small-button" onClick={() => handleConfirmCancel(index)}>Confirm</Button>
                         <Button className="small-button" onClick={() => setState(prevState => ({
                           ...prevState,
