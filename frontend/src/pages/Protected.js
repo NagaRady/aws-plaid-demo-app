@@ -138,6 +138,7 @@ export default function Protected() {
                         >
                           Pay
                         </Button>
+                      </div>
                     )}
 
                     {state.openModalIndex === index && (
