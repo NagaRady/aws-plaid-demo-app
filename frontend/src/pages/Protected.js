@@ -17,7 +17,6 @@ export default function Protected() {
     paymentMethod: '',
     paymentSpeed: '',
     scheduledItems: [],
-    paidItems: [], // Track the paid items
     cancelModalIndex: null,
     cancelledIndexes: [],
     openCancelModalIndex: null,
@@ -98,7 +97,6 @@ export default function Protected() {
       setState((prevState) => ({
         ...prevState,
         scheduledItems: [...prevState.scheduledItems, itemToSchedule],
-        paidItems: [...prevState.paidItems, selectedItem.id], // Add the paid item ID to paidItems
         expandedCardIndex: null, // Reset the expanded card index after the update
       }));
     },
@@ -138,8 +136,7 @@ export default function Protected() {
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
 
-                    {/* Only show the Pay button if the item hasn't been paid */}
-                    {!state.paidItems.includes(card.id) && state.expandedCardIndex !== index && (
+                    {state.expandedCardIndex !== index && (
                       <div style={{ textAlign: 'center', marginTop: '20px' }}>
                         <Button
                           className="pay-button"
