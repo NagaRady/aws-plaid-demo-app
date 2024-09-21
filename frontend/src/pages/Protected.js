@@ -17,7 +17,7 @@ export default function Protected() {
     paymentMethod: '',
     paymentSpeed: '',
     scheduledItems: [],
-    paidItems: [], // Add a new state to track paid items
+    paidItems: [], // Track the paid items
     cancelModalIndex: null,
     cancelledIndexes: [],
     openCancelModalIndex: null,
@@ -93,7 +93,7 @@ export default function Protected() {
       setState((prevState) => ({
         ...prevState,
         scheduledItems: [...prevState.scheduledItems, itemToSchedule],
-        paidItems: [...prevState.paidItems, state.items[index].id], // Add the paid item ID to paidItems
+        paidItems: [...prevState.paidItems, state.items[index].id], // Only add the ID of the paid item to paidItems
         expandedCardIndex: null,
       }));
     },
