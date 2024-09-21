@@ -81,12 +81,12 @@ export default function Protected() {
     (index) => {
       if (!state.paymentMethod || !state.paymentSpeed) return;
 
-      const itemToSchedule = state.items[index];
+      const itemToSchedule = { ...state.items[index], hasPaid: true };
       setState((prevState) => ({
         ...prevState,
         scheduledItems: [...prevState.scheduledItems, itemToSchedule],
         items: prevState.items.map((item, idx) =>
-          idx === index ? { ...item, hasPaid: true } : item
+          idx === index ? itemToSchedule : item
         ),
         expandedCardIndex: null,
       }));
@@ -198,7 +198,17 @@ export default function Protected() {
         return (
           <View>
             <Heading>Scheduled Bills</Heading>
-            {/* The rest of the scheduled bills code */}
+            {state.scheduledItems && state.scheduledItems.length ? (
+              state.scheduledItems.map((item, index) => (
+                <View key={index} className="bill-card">
+                  <Heading level={4}>{item.bankTitle}</Heading>
+                  <p>Amount: ${item.billAmount}</p>
+                  <p>Scheduled for payment on: {item.dueDate}</p>
+                </View>
+              ))
+            ) : (
+              <div>No scheduled bills</p>
+            )}
           </View>
         );
       case 'history':
