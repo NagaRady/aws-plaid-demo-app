@@ -87,7 +87,7 @@ export default function Protected() {
         ...state.items[index], 
         hasPaid: true, 
         showPayButton: false, 
-        status: 'Scheduled' // Add default status when bill is scheduled
+        status: 'Processing' // Add default status when bill is scheduled
       };
       setState((prevState) => ({
         ...prevState,
