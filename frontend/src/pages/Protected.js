@@ -141,7 +141,6 @@ export default function Protected() {
                           <div className="modal" ref={modalRef}>
                             <Button className="small-button" onClick={() => handlePayNow(index)}>PayNow</Button>
                             <Button className="small-button">AutoPay</Button>
-                            <div/> {/* Ensure closing div here if needed */}
                           </div>
                         )}
                       </div>
@@ -200,13 +199,19 @@ export default function Protected() {
           <View>
             <Heading>Scheduled Bills</Heading>
             {state.scheduledItems && state.scheduledItems.length ? (
-              state.scheduledItems.map((item, index) => (
-                <View key={index} className="bill-card">
-                  <Heading level={4}>{item.bankTitle}</Heading>
-                  <p>Amount: ${item.billAmount}</p>
-                  <p>Scheduled for payment on: {item.dueDate}</p>
-                </View>
-              ))
+              <Flex direction="row" wrap="wrap" justifyContent="center">
+                {state.scheduledItems.map((card, index) => (
+                  <View key={card.id}
+                    className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''}`}
+                    style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', backgroundColor: '#f9f9f9', position: 'relative' }}
+                  >
+                    <Heading level={4} style={{ textAlign: 'center' }}>{card.bankTitle}</Heading>
+                    <p>Bill Amount: ${card.billAmount}</p>
+                    <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
+                    <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
+                  </View>
+                ))}
+              </Flex>
             ) : (
               <div>No scheduled bills</div>
             )}
