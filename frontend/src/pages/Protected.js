@@ -207,7 +207,7 @@ export default function Protected() {
                     style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', backgroundColor: '#f9f9f9', position: 'relative' }}
                   >
                     <Heading level={4} style={{ textAlign: 'center' }}>{card.bankTitle}</Heading>
-                    <p>Bill Amount: ${card.billAmount}</p
+                    <p>Bill Amount: ${card.billAmount}</p>
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
                     {state.cancelledIndexes.includes(index) ? (
