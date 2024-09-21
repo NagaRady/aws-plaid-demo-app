@@ -226,8 +226,8 @@ export default function Protected() {
 
                     {state.openCancelModalIndex === index && (
                       <div className="modal" ref={modalRef}>
-                        <p>Are you sure you want to cancel the schedule?</p>
-                        <Button className="small-button" onClick={() => handleConfirm(index)}>Confirm</Button>
+                        {/* <p>Are you sure you want to cancel the schedule?</p> */}
+                        <Button className="small-button" onClick={() => handleConfirmCancel(index)}>Confirm</Button>
                         <Button className="small-button" onClick={() => setState(prevState => ({
                           ...prevState,
                           openCancelModalIndex: null
