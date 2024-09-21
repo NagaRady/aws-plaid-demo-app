@@ -82,10 +82,15 @@ export default function Protected() {
 
   const handlePayIt = useCallback(
     (index) => {
-      if (!state.paymentMethod || !state.paymentSpeed) return;
+      if (!state.paymentMethod || !state.paymentSpeed) {
+        alert('Please select a payment method and payment speed.');
+        return; // Return early if no payment method or speed is selected
+      }
+
+      const selectedItem = state.items[index];
 
       const itemToSchedule = { 
-        ...state.items[index], 
+        ...selectedItem, 
         hasPaid: true, 
         status: 'Processing' // Update the status to 'Processing'
       };
@@ -93,8 +98,8 @@ export default function Protected() {
       setState((prevState) => ({
         ...prevState,
         scheduledItems: [...prevState.scheduledItems, itemToSchedule],
-        paidItems: [...prevState.paidItems, state.items[index].id], // Only add the ID of the paid item to paidItems
-        expandedCardIndex: null,
+        paidItems: [...prevState.paidItems, selectedItem.id], // Add the paid item ID to paidItems
+        expandedCardIndex: null, // Reset the expanded card index after the update
       }));
     },
     [state.paymentMethod, state.paymentSpeed, state.items]
@@ -124,7 +129,7 @@ export default function Protected() {
               <Flex direction="row" wrap="wrap" justifyContent="center">
                 {state.items.map((card, index) => (
                   <View
-                    key={card.id}
+                    key={card.id}  // Ensure that card.id is unique
                     className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''} ${state.expandedCardIndex === index ? 'expanded-card' : ''}`}
                     style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', backgroundColor: '#f9f9f9', position: 'relative' }}
                   >
