@@ -154,7 +154,7 @@ export default function Protected() {
                           Select Payment Method:
                           <select value={state.paymentMethod} onChange={(e) => setState((prevState) => ({ ...prevState, paymentMethod: e.target.value }))}>
                             <option value="">Select</option>
-                            <option value="checking">Checking</option>
+                            <option value="checking">Checking</option
                             <option value="savings">Savings</option>
                           </select>
                         </label>
@@ -207,7 +207,7 @@ export default function Protected() {
                     className={`bill-card ${isDueDatePassed(card.dueDate) ? 'greyed-out' : ''}`}
                     style={{ padding: '20px', border: '1px solid #ccc', margin: '10px', borderRadius: '10px', backgroundColor: '#f9f9f9', position: 'relative' }}
                   >
-                    <Heading level={4} style={{ textAlign: 'center' }}>{card.bankTitle}</Heading
+                    <Heading level={4} style={{ textAlign: 'center' }}>{card.bankTitle}</Heading>
                     <p>Bill Amount: ${card.billAmount}</p>
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
