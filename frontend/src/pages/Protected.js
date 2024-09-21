@@ -212,7 +212,7 @@ export default function Protected() {
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
                     {state.cancelledIndexes.includes(index) ? (
-                      <p>Scheduled</p>
+                      <p>Cancelled</p>
                     ) : (
                       <Button
                         onClick={() => setState(prevState => ({
