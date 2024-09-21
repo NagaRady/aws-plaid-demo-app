@@ -154,7 +154,7 @@ export default function Protected() {
                           Select Payment Method:
                           <select value={state.paymentMethod} onChange={(e) => setState((prevState) => ({ ...prevState, paymentMethod: e.target.value }))}>
                             <option value="">Select</option>
-                            <option value="checking">Checking</option
+                            <option value="checking">Checking</option>
                             <option value="savings">Savings</option>
                           </select>
                         </label>
