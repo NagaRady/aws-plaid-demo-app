@@ -17,6 +17,7 @@ export default function Protected() {
     paymentMethod: '',
     paymentSpeed: '',
     scheduledItems: [],
+    paidItems: [], // Add a new state to track paid items
     cancelModalIndex: null,
     cancelledIndexes: [],
     openCancelModalIndex: null,
@@ -32,7 +33,7 @@ export default function Protected() {
       logger.info(res);
       setState((prevState) => ({
         ...prevState,
-        items: res.data.getItems.items.map(item => ({ ...item, showPayButton: true })),
+        items: res.data.getItems.items.map(item => ({ ...item })),
       }));
     } catch (err) {
       logger.error('Unable to get items', err);
@@ -86,15 +87,13 @@ export default function Protected() {
       const itemToSchedule = { 
         ...state.items[index], 
         hasPaid: true, 
-        showPayButton: false, 
-        status: 'Processing' // Add default status when bill is scheduled
+        status: 'Processing' // Update the status to 'Processing'
       };
+
       setState((prevState) => ({
         ...prevState,
         scheduledItems: [...prevState.scheduledItems, itemToSchedule],
-        items: prevState.items.map((item, idx) =>
-          idx === index ? itemToSchedule : item
-        ),
+        paidItems: [...prevState.paidItems, state.items[index].id], // Add the paid item ID to paidItems
         expandedCardIndex: null,
       }));
     },
@@ -134,7 +133,8 @@ export default function Protected() {
                     <p>Due Date: {new Date(card.dueDate).toLocaleDateString()}</p>
                     <p>Statement Date: {new Date(card.statementDate).toLocaleDateString()}</p>
 
-                    {card.showPayButton && !card.hasPaid && state.expandedCardIndex !== index && (
+                    {/* Only show the Pay button if the item hasn't been paid */}
+                    {!state.paidItems.includes(card.id) && state.expandedCardIndex !== index && (
                       <div style={{ textAlign: 'center', marginTop: '20px' }}>
                         <Button
                           className="pay-button"
