@@ -282,6 +282,13 @@ export default function Protected() {
             <p>Your profile information will be displayed here.</p>
           </View>
         );
+      case 'rewards':
+        return (
+          <View>
+            <Heading>Your Rewards</Heading>
+            <p>Rewards details will be displayed here.</p>
+          </View>
+        );
       default:
         return null;
     }
@@ -290,19 +297,17 @@ export default function Protected() {
   return (
     <Flex direction="column" style={{ padding: '20px', textAlign: 'center' }}>
       <Heading>Your Dashboard</Heading>
-      
       <div className="tabs">
-        {['accounts', 'scheduledBills', 'history', 'manageAccount', 'profile'].map((tab) => (
+        {['accounts', 'scheduledBills', 'history', 'manageAccount', 'profile', 'rewards'].map((tab) => (
           <Button
             key={tab}
             className={state.activeTab === tab ? 'active' : ''}
             onClick={() => setState((prevState) => ({ ...prevState, activeTab: tab }))}
           >
-            {tab === 'accounts' ? 'Upcoming Bills' : tab.charAt(0).toUpperCase() + tab.slice(1)}
+            {tab === 'accounts' ? 'Upcoming Bills' : tab.charAt(0).toUpperCase() + tab.slice(1).replace(/([A-Z])/g, ' $1').trim()}
           </Button>
         ))}
       </div>
-
       <div className="tab-content">
         {renderContent()}
       </div>
