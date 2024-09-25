@@ -24,7 +24,7 @@ export const getAccounts = `query GetAccounts($id: ID!) {
   }
 }`;
 
-export const getTransactions = `query GetTransactions($id: ID!, $limit: Int, $cursor: String) {
+/*export const getTransactions = `query GetTransactions($id: ID!, $limit: Int, $cursor: String) {
   getTransactions(id: $id, limit: $limit, cursor: $cursor) {
     transactions {
       transaction_id
@@ -38,4 +38,4 @@ export const getTransactions = `query GetTransactions($id: ID!, $limit: Int, $cu
     }
     cursor
   }
-}`;
+}`;*/

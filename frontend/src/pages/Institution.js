@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { Divider, Flex, Heading, View } from '@aws-amplify/ui-react';
 import Accounts from '../components/Accounts';
-import Transactions from '../components/Transactions';
+//import Transactions from '../components/Transactions';
 
 export default function Institution() {
 
@@ -29,11 +29,14 @@ export default function Institution() {
           <Heading level={6}>Accounts</Heading>
           <Accounts id={id} updateAccounts={updateAccounts}/>
         </View>
-        <View>
-          <Heading level={6}>Transactions</Heading>
-          <Transactions id={id} accounts={accountMap}/>
-        </View>
       </Flex>
     </Flex>
   );
 }
+
+/*
+        <View>
+          <Heading level={6}>Transactions</Heading>
+          <Transactions id={id} accounts={accountMap}/>
+        </View> 
+*/

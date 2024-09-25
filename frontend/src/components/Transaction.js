@@ -1,4 +1,4 @@
-import { TableRow, TableCell } from '@aws-amplify/ui-react';
+/*import { TableRow, TableCell } from '@aws-amplify/ui-react';
 import Currency from './Currency';
 
 export default function Transaction({ transaction, account }) {
@@ -14,4 +14,4 @@ export default function Transaction({ transaction, account }) {
       <TableCell>{ transaction.transaction_type }</TableCell>
     </TableRow>
   )
-}
+}*/
