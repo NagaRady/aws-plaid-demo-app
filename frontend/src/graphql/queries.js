@@ -24,6 +24,19 @@ export const getAccounts = `query GetAccounts($id: ID!) {
   }
 }`;
 
+
+
+export const getLiabilities= `query GetLiabilities($id: ID!) {
+  getLiabilities(id: $id) {
+    credit {
+      account_id
+      last_statement_issue_date
+      last_statement_balance
+      next_payment_due_date
+    }
+  }
+}`;
+
 /*export const getTransactions = `query GetTransactions($id: ID!, $limit: Int, $cursor: String) {
   getTransactions(id: $id, limit: $limit, cursor: $cursor) {
     transactions {

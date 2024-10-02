@@ -5,7 +5,7 @@ schema {
 type Query {
   getItems(limit: Int, cursor: String): PaginatedItems!
   getAccounts(id: ID!): [Account!]!
-  getTransactions(id: ID!, limit: Int, cursor: String): PaginatedTransactions!
+  getLiabilities(id: ID!): Liabilities!
 }
 
 type Item {
@@ -33,18 +33,13 @@ type Balances {
   iso_currency_code: String
 }
 
-type Transaction {
-  transaction_id: ID!
-  account_id: ID
-  amount: String
-  name: String
-  iso_currency_code: String
-  date: String
-  payment_channel: String
-  transaction_type: String
+type Liabilities {
+  credit: [CreditLiability!]!
 }
 
-type PaginatedTransactions {
-  cursor: String
-  transactions: [Transaction!]!
+type CreditLiability {
+  account_id: ID!
+  last_statement_issue_date: String
+  last_statement_balance: String
+  next_payment_due_date: String
 }
