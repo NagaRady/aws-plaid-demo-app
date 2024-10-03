@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { Divider, Flex, Heading, View } from '@aws-amplify/ui-react';
 import Accounts from '../components/Accounts';
-//import Transactions from '../components/Transactions';
+import Liabilities from '../components/Liabilities'; // Import the Liabilities component
 
 export default function Institution() {
 
@@ -11,7 +11,7 @@ export default function Institution() {
   const [accountMap, setAccountMap] = useState({});
 
   const updateAccounts = (accounts) => {
-    const accountMap = accounts.reduce((acc, cur, idx) => {
+    const accountMap = accounts.reduce((acc, cur) => {
       acc[cur.account_id] = cur;
       return acc;
     }, {});
@@ -29,14 +29,11 @@ export default function Institution() {
           <Heading level={6}>Accounts</Heading>
           <Accounts id={id} updateAccounts={updateAccounts}/>
         </View>
+        <View>
+          <Heading level={6}>Liabilities</Heading>
+          <Liabilities id={id} accounts={accountMap}/>
+        </View> 
       </Flex>
     </Flex>
   );
 }
-
-/*
-        <View>
-          <Heading level={6}>Transactions</Heading>
-          <Transactions id={id} accounts={accountMap}/>
-        </View> 
-*/
