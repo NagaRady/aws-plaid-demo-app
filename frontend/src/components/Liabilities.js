@@ -1,51 +1,56 @@
-import { useEffect, useState } from 'react';
-import { API, graphqlOperation } from 'aws-amplify';
-import { getLiabilities } from '../graphql/queries';
-import { View, Table, Text } from '@aws-amplify/ui-react';
+import React, { useState, useEffect } from 'react';
+import { generateClient } from 'aws-amplify/api';
+import { Table, TableRow, TableCell, Loader } from '@aws-amplify/ui-react';
+import { getLiabilities as GetLiabilities } from '../graphql/queries';
 
-function Liabilities({ id, accounts }) {
+export default function Liabilities({ id }) {
   const [liabilities, setLiabilities] = useState([]);
-
-  useEffect(() => {
-    fetchLiabilities();
-  }, [id]); // Dependency array includes id to refetch when the institution id changes
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchLiabilities = async () => {
+    setLoading(true);
     try {
-      const liabilityData = await API.graphql(graphqlOperation(getLiabilities, { id }));
-      const { data: { getLiabilities: { credit } } } = liabilityData;
-      setLiabilities(credit);
-    } catch (error) {
-      console.error('Error fetching liabilities:', error);
-      setLiabilities([]);
+      const client = generateClient();
+      const res = await client.graphql({
+        query: GetLiabilities,
+        variables: { id }
+      });
+      setLiabilities(res.data.getLiabilities);
+      setLoading(false);
+    } catch (err) {
+      setError(err);
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchLiabilities();
+  }, [id]);
+
+  if (loading) return <Loader />;
+  if (error) return <p>Error fetching liabilities: {error.message}</p>;
+
   return (
-    <View>
-      <Text variant="primary">Credit Card Liabilities</Text>
-      <Table>
-        <thead>
-          <tr>
-            <th>Account ID</th>
-            <th>Last Statement Issue Date</th>
-            <th>Last Statement Balance</th>
-            <th>Next Payment Due Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {liabilities.map((liability, idx) => (
-            <tr key={idx}>
-              <td>{accounts[liability.account_id]?.name || liability.account_id}</td>
-              <td>{liability.last_statement_issue_date}</td>
-              <td>${liability.last_statement_balance}</td>
-              <td>{liability.next_payment_due_date}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </View>
+    <Table highlightOnHover={true} variation="striped">
+      <thead>
+        <TableRow>
+          <TableCell as="th">Account ID</TableCell>
+          <TableCell as="th">Last Statement Issue Date</TableCell>
+          <TableCell as="th">Last Statement Balance</TableCell>
+          <TableCell as="th">Next Payment Due Date</TableCell>
+        </TableRow>
+      </thead>
+      <tbody>
+        {liabilities.map(liability => (
+          <TableRow key={liability.credit.account_id}>
+            <TableCell>{liability.credit.account_id}</TableCell>
+            <TableCell>{liability.credit.last_statement_issue_date}</TableCell>
+            <TableCell>${liability.credit.last_statement_balance}</TableCell>
+            <TableCell>{liability.credit.next_payment_due_date}</TableCell>
+          </TableRow>
+        ))}
+      </tbody>
+    </Table>
   );
 }
-
-export default Liabilities;
