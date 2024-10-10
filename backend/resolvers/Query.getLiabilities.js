@@ -34,7 +34,8 @@ export function request(ctx) {
 export function response(ctx) {
   const { error, result } = ctx;
   if (error) {
-    return util.appendError(error.message, error.type, result);
+    console.log("DynamoDB Error:", error);
+    return util.appendError("Failed to fetch liabilities due to backend error", "LiabilityFetchError", result);
   }
 
   const liabilities = result.items.map((item) => ({
