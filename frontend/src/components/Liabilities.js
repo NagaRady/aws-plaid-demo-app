@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/api';
+import { ConsoleLogger } from 'aws-amplify/utils';
 import { Table, TableRow, TableCell, Loader } from '@aws-amplify/ui-react';
 import { getLiabilities as GetLiabilities } from '../graphql/queries';
+
+const logger = new ConsoleLogger("Liabilities");
+
 
 export default function Liabilities({ id }) {
   const [liabilities, setLiabilities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  const client = generateClient();
 
   const fetchLiabilities = async () => {
     setLoading(true);
     try {
-      const client = generateClient();
       const res = await client.graphql({
         query: GetLiabilities,
         variables: { id }
