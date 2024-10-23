@@ -1,4 +1,4 @@
-import { Table, TableHead, TableRow, TableCell, TableBody, Button } from '@aws-amplify/ui-react';
+import { Table, TableHead, TableRow, TableCell, TableBody } from '@aws-amplify/ui-react';
 import Institution from './Institution';
 
 export default function Institutions({ institutions = [], onDelete }) {
@@ -14,25 +14,19 @@ export default function Institutions({ institutions = [], onDelete }) {
       <TableHead>
         <TableRow>
           <TableCell as="th">Name</TableCell>
-          <TableCell as="th">Actions</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
         {institutions.length ? (
-          institutions.map((institution) => (
-            <TableRow key={institution.institution_id}>
-              <Institution institution={institution} />
-              <TableCell>
-                <Button onClick={() => handleDelete(institution.institution_id)}>Delete</Button>
-              </TableCell>
-            </TableRow>
-          ))
+          institutions.map((institution) => {
+            return <Institution key={institution.institution_id} institution={institution}/>;
+          })
         ) : (
           <TableRow>
-            <TableCell colSpan="2">No institutions found</TableCell>
+            <TableCell>No institutions found</TableCell>
           </TableRow>
         )}
       </TableBody>
     </Table>
-  );
+  )
 }
