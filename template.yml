@@ -634,6 +634,38 @@ Resources:
       Runtime:
         Name: APPSYNC_JS
         RuntimeVersion: "1.0.0"
+        
+  GetLiabilitiesResolver:
+    Type: "AWS::AppSync::Resolver"
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      FieldName: getLiabilities
+      TypeName: Query
+      Kind: PIPELINE
+      PipelineConfig:
+        Functions:
+          - !GetAtt GetLiabilitiesFunctionConfiguration.FunctionId
+      Runtime:
+        Name: APPSYNC_JS
+        RuntimeVersion: "1.0.0"
+      Code: |-
+        export function request(ctx) {
+          return {};
+        }
+        export function response(ctx) {
+          return ctx.prev.result;
+        }
+
+  GetLiabilitiesFunctionConfiguration:
+    Type: "AWS::AppSync::FunctionConfiguration"
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      Name: GET_LIABILITIES
+      DataSourceName: !GetAtt DynamoDBDataSource.Name
+      CodeS3Location: backend/resolvers/Query.getLiabilities.js
+      Runtime:
+        Name: APPSYNC_JS
+        RuntimeVersion: "1.0.0"
 
   HttpApiAuthorizer:
     Type: "AWS::ApiGatewayV2::Authorizer"
@@ -728,8 +760,8 @@ Resources:
       AutoVerifiedAttributes:
         - email
       EnabledMfas:
-        - SOFTWARE_TOKEN_MFA
-      MfaConfiguration: "ON"
+      # - SOFTWARE_TOKEN_MFA
+      MfaConfiguration: "OFF"
       Policies:
         PasswordPolicy:
           MinimumLength: 8
